@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="messages-container">
+                <div id="messages" class="messages">
+                    {% for msg in chatmessage_list %}
+                    <p>
+                        <span class="username">{{ msg.username }}:</span>
+                        {{ msg.message }}
+                        <span class="timestamp">&ndash; <span data-livestamp="{{ msg.created}}">{{ msg.created }}</span></span>
+                    </p>
+                    {% endfor %}
+                </div>
+
+                <ul id="user-list" class="user-list">
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="add-message">
+                <p class="pull-left">Logged in as: <b id="username">{{ silly_name }}</b></p>
+                <div class="form-group">
+                    <textarea id="chat-message" class="form-control message" placeholder="Write a message"></textarea>
+                </div>
+
+                <div class="form-group clearfix">
+                    <input id="btn-send-message" type="submit" class="btn btn-primary pull-right send-message" style="margin-left: 10px;" value="Send message" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input id="ws-server-path" type="hidden" value="{{ ws_server_path }}">
+
+    {% verbatim %}
+    <script id="chat-message-template" type="text/x-handlebars-template">
+        <p>
+            <span class="username">{{ msg.username }}:</span>
+            {{ msg.message }}
+            <span class="timestamp">&ndash; <span data-livestamp="{{ msg.created}}">{{ msg.created }}</span></span>
+        </p>
+    </script>
+
+    <script id="user-list-item-template" type="text/x-handlebars-template">
+        <li>{{ username }}</li>
+    </script>
+    {% endverbatim %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static "js/sillyname.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/app.js" %}" type="text/javascript"></script>
+{% endblock %}
