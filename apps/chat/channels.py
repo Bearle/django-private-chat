@@ -1,5 +1,4 @@
 import asyncio
-import multiprocessing
 
 
 new_messages = asyncio.Queue()

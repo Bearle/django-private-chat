@@ -27,6 +27,8 @@ def fanout_message(connections, payload):
 
 @asyncio.coroutine
 def new_messages_handler(stream):
+    """Saves a new chat message to db and distributes msg to connected users
+    """
     while True:
         packet = yield from stream.get()
 
@@ -44,6 +46,8 @@ def new_messages_handler(stream):
 
 @asyncio.coroutine
 def users_changed_handler(stream):
+    """Sends connected client list of currently active users in the chatroom
+    """
     while True:
         yield from stream.get()
 
@@ -64,9 +68,21 @@ def users_changed_handler(stream):
 
 @asyncio.coroutine
 def main_handler(websocket, path):
+    """An Asyncio Task is created for every new websocket client connection
+    that is established. This coroutine listens to messages from the connected
+    client and routes the message to the proper queue.
+
+    This coroutine can be thought of as a producer.
+    """
+
+    # Get users name from the path
     username = urllib.parse.unquote(path[1:])
+
+    # Persist users connection, associate user w/a unique ID
     ws_connections[websocket] = (username, str(uuid.uuid4()))
 
+    # While the websocket is open, listen for incoming messages/events
+    # if unable to listening for messages/events, then disconnect the client
     try:
         while websocket.open:
             data = yield from websocket.recv()
@@ -75,7 +91,7 @@ def main_handler(websocket, path):
             try:
                 yield from router.MessageRouter(data)()
             except Exception as e:
-                logger.debug('could not route msg', e)
+                logger.error('could not route msg', e)
 
     except websockets.exceptions.InvalidState:  # User disconnected
         pass
