@@ -18,11 +18,11 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles import views
 
-from home import views as home_views
+from apps.home import views as home_views
 
 
 urlpatterns = [
-    url(r'',
+    url(r'^$',
         home_views.HomePageView.as_view(),
         name='home'
     ),

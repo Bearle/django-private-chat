@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 from sys import path as sys_path
-
 from configurations import Configuration, values
 import dj_database_url
 
@@ -53,8 +52,8 @@ class Common(Configuration):
     )
 
     PROJECT_APPS = (
-        'chat',
-        'home',
+        'apps.chat',
+        'apps.home',
     )
 
     INSTALLED_APPS = DJANGO_APPS + VENDOR_APPS + PROJECT_APPS
@@ -145,10 +144,6 @@ class Common(Configuration):
             },
         },
         'handlers': {
-            'null': {
-                'level': 'DEBUG',
-                'class': 'django.utils.log.NullHandler',
-            },
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
@@ -161,7 +156,7 @@ class Common(Configuration):
         },
         'loggers': {
             'django': {
-                'handlers': ['null'],
+                'handlers': ['console'],
                 'propagate': True,
                 'level': 'INFO',
             },

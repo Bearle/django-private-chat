@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 
-from chat import channels
+from apps.chat import channels
 
 logger = logging.getLogger('apps.chat')
 

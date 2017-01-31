@@ -3,7 +3,7 @@ import websockets
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from chat import channels, handlers
+from apps.chat import channels, handlers
 
 
 class Command(BaseCommand):

@@ -7,7 +7,7 @@ import websockets
 
 from django.template.defaultfilters import date as dj_date
 
-from chat import channels, models, router
+from apps.chat import channels, models, router
 
 
 logger = logging.getLogger('apps.chat')
@@ -94,6 +94,7 @@ def main_handler(websocket, path):
                 logger.error('could not route msg', e)
 
     except websockets.exceptions.InvalidState:  # User disconnected
+        # alert the other user that this user went offline
         pass
     finally:
         del ws_connections[websocket]
