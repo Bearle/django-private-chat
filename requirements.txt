@@ -13,3 +13,4 @@ six==1.10.0
 waitress==1.0.1
 websockets==3.2
 whitenoise==3.3.0
+uvloop==0.7.2
