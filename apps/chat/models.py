@@ -7,6 +7,3 @@ class ChatMessage(dj_extensions_models.TimeStampedModel):
     message = models.TextField()
 
 
-class UserEvent(dj_extensions_models.TimeStampedModel):
-    user_name = models.CharField(max_length=255, blank=True, null=True)
-    message = models.TextField()
