@@ -9,8 +9,8 @@
                 <div id="messages" class="messages">
                     {% for msg in chatmessage_list %}
                     <p>
-                        <span class="username">{{ msg.username }}:</span>
-                        {{ msg.message }}
+                        <span class="username">{{ msg.sender.username }}:</span>
+                        {{ msg.text }}
                         <span class="timestamp">&ndash; <span data-livestamp="{{ msg.created}}">{{ msg.created }}</span></span>
                     </p>
                     {% endfor %}

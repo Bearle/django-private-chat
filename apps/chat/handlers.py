@@ -4,11 +4,11 @@ import logging
 import urllib
 import uuid
 import websockets
+from django.contrib.auth import get_user_model
 
 from django.template.defaultfilters import date as dj_date
 
 from apps.chat import channels, models, router
-
 
 logger = logging.getLogger('apps.chat')
 ws_connections = {}
@@ -29,13 +29,19 @@ def fanout_message(connections, payload):
 def new_messages_handler(stream):
     """Saves a new chat message to db and distributes msg to connected users
     """
+    #TODO: handle no user found exception
     while True:
         packet = yield from stream.get()
-
+        user_set = get_user_model().objects.filter(first_name=packet['username'].split(' ')[0],last_name=packet['username'].split(' ')[1])
+        if len(user_set) > 0:
+            user = user_set[0]
+        else:
+            user = None
         # Save the message
-        msg = models.ChatMessage.objects.create(
-            username=packet['username'],
-            message=packet['message']
+        msg = models.Message.objects.create(
+            dialog=models.Dialog.objects.all()[0],
+            sender=user,
+            text=packet['message']
         )
 
         packet['created'] = dj_date(msg.created, "DATETIME_FORMAT")
@@ -55,7 +61,7 @@ def users_changed_handler(stream):
         users = [
             {'username': username, 'uuid': uuid_str}
             for username, uuid_str in ws_connections.values()
-        ]
+            ]
 
         # Make packet with list of new users (sorted by username)
         packet = {

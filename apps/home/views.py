@@ -7,15 +7,12 @@ from apps.home.utils import get_silly_name
 
 class HomePageView(LoginRequiredMixin,generic.ListView):
     template_name = 'landing/home.html'
-    model = models.ChatMessage
+    model = models.Message
     ordering = 'created'
     paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        # silly_name = self.request.session.setdefault(
-        #     'silly_name', get_silly_name()
-        # )
 
         context['silly_name'] = self.request.user.get_full_name()
         context['ws_server_path'] = 'ws://{}:{}/'.format(

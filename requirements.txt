@@ -14,3 +14,5 @@ waitress==1.0.1
 websockets==3.2
 whitenoise==3.3.0
 uvloop==0.7.2
+django-model-utils==2.6.1
+django-test-plus==1.0.17
