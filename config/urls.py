@@ -22,10 +22,7 @@ from apps.home import views as home_views
 
 
 urlpatterns = [
-    url(r'^$',
-        home_views.HomePageView.as_view(),
-        name='home'
-    ),
+    url(r'^', include('apps.home.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

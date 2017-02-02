@@ -3,6 +3,7 @@ from model_utils.models import TimeStampedModel, SoftDeletableModel
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
+
 class Dialog(TimeStampedModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Владелец диалога", related_name="selfDialogs")
     opponent = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Собеседник владельца")

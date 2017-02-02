@@ -107,9 +107,9 @@ class Common(Configuration):
     # Internationalization
     # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-    LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'ru-RU'
 
-    TIME_ZONE = values.Value('America/New_York')
+    TIME_ZONE = values.Value('Europe/Moscow')
 
     USE_I18N = True
 

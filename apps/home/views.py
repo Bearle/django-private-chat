@@ -1,11 +1,15 @@
 from django.conf import settings
 from django.views import generic
 from braces.views import LoginRequiredMixin
+from django.urls import reverse
 from apps.chat import models
 from apps.home.utils import get_silly_name
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
 
-class HomePageView(LoginRequiredMixin,generic.ListView):
+class DialogListView(LoginRequiredMixin, generic.ListView):
     template_name = 'landing/home.html'
     model = models.Message
     ordering = 'created'
@@ -20,3 +24,20 @@ class HomePageView(LoginRequiredMixin,generic.ListView):
             settings.CHAT_WS_SERVER_PORT,
         )
         return context
+
+
+class UserListView(LoginRequiredMixin, generic.ListView):
+    model = get_user_model()
+    # These next two lines tell the view to index lookups by username
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'landing/users.html'
+
+
+class DialogRedirectView(LoginRequiredMixin, generic.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        username = kwargs.pop('username')
+        user = get_object_or_404(get_user_model(), username=username)
+        new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
+        url = reverse('dialog_list', kwargs={'pk': new_dialog.pk})
+        return url
