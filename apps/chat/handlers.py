@@ -15,6 +15,20 @@ ws_connections = {}
 
 
 @asyncio.coroutine
+def target_message(conn, payload):
+    """
+    Distibuted payload (message) to one connection
+    :param conn: connection
+    :param payload: payload(json dumpable)
+    :return:
+    """
+    try:
+        yield from conn.send(json.dumps(payload))
+    except Exception as e:
+        logger.debug('could not send', e)
+
+
+@asyncio.coroutine
 def fanout_message(connections, payload):
     """distributes payload (message) to all connected ws clients
     """
@@ -29,10 +43,11 @@ def fanout_message(connections, payload):
 def new_messages_handler(stream):
     """Saves a new chat message to db and distributes msg to connected users
     """
-    #TODO: handle no user found exception
+    # TODO: handle no user found exception
     while True:
         packet = yield from stream.get()
-        user_set = get_user_model().objects.filter(first_name=packet['username'].split(' ')[0],last_name=packet['username'].split(' ')[1])
+        user_set = get_user_model().objects.filter(first_name=packet['username'].split(' ')[0],
+                                                   last_name=packet['username'].split(' ')[1])
         if len(user_set) > 0:
             user = user_set[0]
         else:
@@ -49,7 +64,7 @@ def new_messages_handler(stream):
         # Create new message
         yield from fanout_message(ws_connections.keys(), packet)
 
-
+#TODO: use for online/offline status
 @asyncio.coroutine
 def users_changed_handler(stream):
     """Sends connected client list of currently active users in the chatroom
@@ -83,7 +98,7 @@ def main_handler(websocket, path):
 
     # Get users name from the path
     username = urllib.parse.unquote(path[1:])
-
+    print(websocket,path)
     # Persist users connection, associate user w/a unique ID
     ws_connections[websocket] = (username, str(uuid.uuid4()))
 
@@ -95,12 +110,12 @@ def main_handler(websocket, path):
             if not data: continue
             logger.debug(data)
             try:
-                yield from router.MessageRouter(data)()
+                yield from router.MessageRouter(data)() #TODO: WTF
             except Exception as e:
                 logger.error('could not route msg', e)
 
     except websockets.exceptions.InvalidState:  # User disconnected
-        # alert the other user that this user went offline
+        # TODO: alert the other user that this user went offline
         pass
     finally:
         del ws_connections[websocket]
