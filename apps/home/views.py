@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 
-class DialogListView(LoginRequiredMixin, generic.ListView):
+class MessageListView(LoginRequiredMixin, generic.ListView):
     template_name = 'landing/home.html'
     model = models.Message
     ordering = 'created'
@@ -18,6 +18,20 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data()
 
         context['silly_name'] = self.request.user.get_full_name()
+        context['ws_server_path'] = 'ws://{}:{}/'.format(
+            settings.CHAT_WS_SERVER_HOST,
+            settings.CHAT_WS_SERVER_PORT,
+        )
+        return context
+
+
+class DialogListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'landing/dialogs.html'
+    model = models.Dialog
+    ordering = 'modified'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
         context['ws_server_path'] = 'ws://{}:{}/'.format(
             settings.CHAT_WS_SERVER_HOST,
             settings.CHAT_WS_SERVER_PORT,
@@ -36,7 +50,7 @@ class UserListView(LoginRequiredMixin, generic.ListView):
 class DialogRedirectView(LoginRequiredMixin, generic.RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         username = kwargs.pop('username')
-        #TODO: check for existing dialog
+        # TODO: check for existing dialog
         user = get_object_or_404(get_user_model(), username=username)
         new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
         url = reverse('dialog_list', kwargs={'pk': new_dialog.pk})

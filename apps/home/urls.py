@@ -23,8 +23,13 @@ urlpatterns = [
     ),
     url(
         regex=r'^dialogs/(?P<pk>[0-9]+)$',
-        view=views.DialogListView.as_view(),
+        view=views.MessageListView.as_view(),
         name='dialog_list'
+    ),
+    url(
+        regex=r'^dialogs/$',
+        view = views.DialogListView.as_view(),
+        name='dialogs'
     ),
     # url(r'^$',
     #     views.HomePageView.as_view(),

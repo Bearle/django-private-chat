@@ -13,8 +13,8 @@ class ViewsTest(TestCase):
         self.dialog.opponent = self.make_user(username="opuser")
         self.dialog.save()
 
-    def test_dialog_list_context(self):
-        view = DialogListView(template_name='landing/home.html', model=Message)
+    def test_message_list_context(self):
+        view = MessageListView(template_name='landing/home.html', model=Message)
         request = self.factory.get(reverse('dialog_list', kwargs={'pk': self.dialog.pk}))
         request.user = self.make_user("someuser")
         request.user.first_name = "Hey"
