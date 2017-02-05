@@ -6,8 +6,9 @@
     <div class="container">
     <div class="col-md-3">
         <div class="user-list-div">
-            <ul>Dialog 1</ul>
-            <ul>Dialog 2</ul>
+            {% for dialog in object_list %}
+                <ul><a href="{% url 'dialog_redirect' dialog.opponent.username %}" class="btn btn-primary">{{ dialog }}</a></ul>
+            {% endfor %}
         </div>
     </div>
     <div class="col-md-9">

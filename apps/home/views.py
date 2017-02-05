@@ -50,8 +50,11 @@ class UserListView(LoginRequiredMixin, generic.ListView):
 class DialogRedirectView(LoginRequiredMixin, generic.RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         username = kwargs.pop('username')
-        # TODO: check for existing dialog
         user = get_object_or_404(get_user_model(), username=username)
-        new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
+        dialog = models.Dialog.objects.filter(owner=self.request.user, opponent=user)
+        if not dialog:
+            new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
+        else:
+            new_dialog = dialog[0]
         url = reverse('dialog_list', kwargs={'pk': new_dialog.pk})
         return url
