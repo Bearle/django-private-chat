@@ -97,6 +97,8 @@
 
             function setupChatWebSocket(username) {
                 websocket = new WebSocket(base_ws_server_path+"/"+username);
+                ////////////////////////////////////////////////////////////////
+                //TODO: online-offline
                 websocket.onopen = function (event) {
                     var onConnectPacket = JSON.stringify({
                         type: "start-dialog",
@@ -111,7 +113,7 @@
                     var onClosePacket = JSON.stringify({type: 'close'});
                     websocket.send(onClosePacket)
                 };
-
+                ////////////////////////////////////////////////////////////////
                 websocket.onmessage = function (event) {
                     var packet;
 
@@ -123,6 +125,9 @@
                     }
 
                     switch (packet.type) {
+                        case "new-dialog":
+                            // TODO: add new dialog to dialog_list
+                            break;
                         case "user-not-found":
                             // TODO: dispay some kind of an error that the user is not found
                             break;
