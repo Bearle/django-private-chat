@@ -17,14 +17,14 @@ urlpatterns = [
 #         name='detail'
 #     ),
     url(
-        regex=r'^dialogs/start/(?P<username>[\w.@+-]+)$',
-        view=views.DialogRedirectView.as_view(),
-        name='dialog_redirect'
-    ),
-    url(
         regex=r'^dialogs/(?P<pk>[0-9]+)$',
         view=views.MessageListView.as_view(),
         name='dialog_list'
+    ),
+    url(
+        regex=r'^dialogs/(?P<username>[\w.@+-]+)$',
+        view = views.DialogListView.as_view(),
+        name='dialogs_detail'
     ),
     url(
         regex=r'^dialogs/$',

@@ -6,6 +6,7 @@ from apps.home.utils import get_silly_name
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.db.models import Q
 
 
 class MessageListView(LoginRequiredMixin, generic.ListView):
@@ -25,13 +26,33 @@ class MessageListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
+def get_dialogs_with_user(user_1, user_2):
+    return models.Dialog.objects.filter(
+        Q(owner=user_1, opponent=user_2) | Q(opponent=user_1, owner=user_2))
+
+
 class DialogListView(LoginRequiredMixin, generic.ListView):
     template_name = 'landing/dialogs.html'
     model = models.Dialog
     ordering = 'modified'
 
+    def get_queryset(self):
+        dialogs = models.Dialog.objects.filter(Q(owner=self.request.user) | Q(opponent=self.request.user))
+        return dialogs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
+        if self.kwargs.get('username'):
+            # TODO: show alert that user is not found instead of 404
+            user = get_object_or_404(get_user_model(), username=self.kwargs.get('username'))
+            dialog = get_dialogs_with_user(self.request.user, user)
+            if len(dialog) == 0:
+                dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
+            else:
+                dialog = dialog[0]
+            context['active_dialog'] = dialog
+        else:
+            context['active_dialog'] = self.queryset[0]
         context['ws_server_path'] = 'ws://{}:{}/'.format(
             settings.CHAT_WS_SERVER_HOST,
             settings.CHAT_WS_SERVER_PORT,
@@ -45,18 +66,3 @@ class UserListView(LoginRequiredMixin, generic.ListView):
     slug_field = 'username'
     slug_url_kwarg = 'username'
     template_name = 'landing/users.html'
-
-
-class DialogRedirectView(LoginRequiredMixin, generic.RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        username = kwargs.pop('username')
-        user = get_object_or_404(get_user_model(), username=username)
-        dialog = models.Dialog.objects.filter(owner=self.request.user, opponent=user)
-        if len(dialog) == 0:
-            dialog = models.Dialog.objects.filter(owner=user, opponent=self.request.user)
-        if len(dialog) == 0:
-            new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
-        else:
-            new_dialog = dialog[0]
-        url = reverse('dialog_list', kwargs={'pk': new_dialog.pk})
-        return url

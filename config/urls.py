@@ -17,7 +17,6 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles import views
-
 from apps.home import views as home_views
 
 

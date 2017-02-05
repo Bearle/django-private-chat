@@ -4,7 +4,7 @@
         {% for user in object_list %}
             {% if user != request.user %}
                 <p>{{ user.get_full_name }}</p>
-                <a href="{% url 'dialog_redirect' user.username %}" class="btn btn-primary">Начать диалог
+                <a href="{% url 'dialogs_detail' user.username %}" class="btn btn-primary">Начать диалог
                     с {{ user.username }}</a>
             {% endif %}
         {% endfor %}
