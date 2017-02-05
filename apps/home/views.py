@@ -52,7 +52,9 @@ class DialogRedirectView(LoginRequiredMixin, generic.RedirectView):
         username = kwargs.pop('username')
         user = get_object_or_404(get_user_model(), username=username)
         dialog = models.Dialog.objects.filter(owner=self.request.user, opponent=user)
-        if not dialog:
+        if len(dialog) == 0:
+            dialog = models.Dialog.objects.filter(owner=user, opponent=self.request.user)
+        if len(dialog) == 0:
             new_dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
         else:
             new_dialog = dialog[0]

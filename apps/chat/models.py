@@ -19,4 +19,4 @@ class Message(TimeStampedModel, SoftDeletableModel):
     all_objects = models.Manager()
 
     def __str__(self):
-        return f"Сообщение пользователя {self.sender.username}"
+        return f"{self.sender.username}({self.modified.strftime('%x %X')}) - '{self.text}'"

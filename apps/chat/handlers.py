@@ -98,7 +98,6 @@ def main_handler(websocket, path):
 
     # Get users name from the path
     username = urllib.parse.unquote(path[1:])
-    print(websocket,path)
     # Persist users connection, associate user w/a unique ID
     ws_connections[websocket] = (username, str(uuid.uuid4()))
 
