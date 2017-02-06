@@ -9,7 +9,12 @@
         <ul>
             {% for dialog in object_list %}
                 <li>
-                    <a href="{% url 'dialogs_detail' dialog.opponent.username %}" class="btn btn-primary">{{ dialog }}</a>
+
+                    <a href="{% if dialog.owner == request.user %}
+                        {% url 'dialogs_detail' dialog.opponent.username %}
+                        {% else %}
+                        {% url 'dialogs_detail' dialog.owner.username %}
+                        {% endif %}" class="btn btn-primary">{{ dialog }}</a>
                 </li>
             {% endfor %}
         </ul>
@@ -70,12 +75,8 @@
         $(document).ready(function () {
             var websocket = null;
 
-            function addNewMessage(packet) {
-                var msgElem = generateMessage(packet);
-                $('#messages').append(msgElem);
-                scrollToLastMessage()
-            }
 
+            // TODO: Use for adding new dialog
             function addNewUser(packet) {
                 $('#user-list').html('');
                 packet.value.forEach(function (userInfo) {
@@ -83,6 +84,12 @@
                     var tmpl = Handlebars.compile($('#user-list-item-template').html());
                     $('#user-list').append(tmpl(userInfo))
                 });
+            }
+
+            function addNewMessage(packet) {
+                var msgElem = generateMessage(packet);
+                $('#messages').append(msgElem);
+                scrollToLastMessage()
             }
 
             function scrollToLastMessage() {
@@ -99,6 +106,7 @@
                 websocket = new WebSocket(base_ws_server_path+"/"+username);
                 ////////////////////////////////////////////////////////////////
                 //TODO: online-offline
+                {% comment %}
                 websocket.onopen = function (event) {
                     var onConnectPacket = JSON.stringify({
                         type: "start-dialog",
@@ -113,6 +121,7 @@
                     var onClosePacket = JSON.stringify({type: 'close'});
                     websocket.send(onClosePacket)
                 };
+                {% endcomment %}
                 ////////////////////////////////////////////////////////////////
                 websocket.onmessage = function (event) {
                     var packet;
@@ -145,10 +154,17 @@
                 }
             }
 
-            function broadCastMessage(message) {
+            function sendMessage(message) {
+                var opponent_username;
+                {% if dialog.owner == request.user %}
+                        opponent_username = "{{ active_dialog.opponent.username }}";
+                {% else %}
+                        opponent_username = "{{ active_dialog.owner.username }}";
+                {% endif %}
                 var newMessagePacket = JSON.stringify({
                     type: 'new-message',
-                    username: getUsername(),
+                    session_key: '{{ request.session.session_key }}',
+                    username: opponent_username,
                     message: message
                 });
                 websocket.send(newMessagePacket)
@@ -156,7 +172,7 @@
 
             $('#chat-message').keypress(function (e) {
                 if (e.which == 13 && this.value) {
-                    broadCastMessage(this.value);
+                    sendMessage(this.value);
                     this.value = "";
                     return false
                 }
@@ -166,7 +182,7 @@
                 var $chatInput = $('#chat-message');
                 var msg = $chatInput.val();
                 if (!msg) return;
-                broadCastMessage($chatInput.val());
+                sendMessage($chatInput.val());
                 $chatInput.val('')
             });
         });
