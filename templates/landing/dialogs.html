@@ -156,7 +156,7 @@
 
             function sendMessage(message) {
                 var opponent_username;
-                {% if dialog.owner == request.user %}
+                {% if active_dialog.owner == request.user %}
                         opponent_username = "{{ active_dialog.opponent.username }}";
                 {% else %}
                         opponent_username = "{{ active_dialog.owner.username }}";
