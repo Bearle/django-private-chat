@@ -16,11 +16,11 @@ urlpatterns = [
 #         view=views.UserDetailView.as_view(),
 #         name='detail'
 #     ),
-    url(
-        regex=r'^dialogs/(?P<pk>[0-9]+)$',
-        view=views.MessageListView.as_view(),
-        name='dialog_list'
-    ),
+#     url(
+#         regex=r'^dialogs/(?P<pk>[0-9]+)$',
+#         view=views.MessageListView.as_view(),
+#         name='dialog_list'
+#     ),
     url(
         regex=r'^dialogs/(?P<username>[\w.@+-]+)$',
         view = views.DialogListView.as_view(),

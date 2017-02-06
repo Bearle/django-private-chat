@@ -102,27 +102,25 @@
                 return tmpl({msg: context})
             }
 
-            function setupChatWebSocket(username) {
-                websocket = new WebSocket(base_ws_server_path+"/"+username);
-                ////////////////////////////////////////////////////////////////
-                //TODO: online-offline
-                {% comment %}
-                websocket.onopen = function (event) {
-                    var onConnectPacket = JSON.stringify({
-                        type: "start-dialog",
-                        session_key: {{ request.session.session_key }}
-                    });
-                    console.log('connected, sending:', onConnectPacket);
-                    websocket.send(onConnectPacket)
-                };
 
-                websocket.onclose = function (event) {
-                    console.log('disconnected');
-                    var onClosePacket = JSON.stringify({type: 'close'});
-                    websocket.send(onClosePacket)
-                };
-                {% endcomment %}
-                ////////////////////////////////////////////////////////////////
+
+            function setupChatWebSocket() {
+                websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/{{ active_dialog.opponent.username }}');
+{#                websocket.onopen = function (event) {#}
+{#                    var onConnectPacket = JSON.stringify({#}
+{#                        type: "new-user",#}
+{#                        username: getUsername(),#}
+{#                    });#}
+{#                    console.log('connected, sending:', onConnectPacket);#}
+{#                    websocket.send(onConnectPacket)#}
+{#                };#}
+{##}
+{#                websocket.onclose = function (event) {#}
+{#                    console.log('disconnected');#}
+{#                    var onClosePacket = JSON.stringify({type: 'close'});#}
+{#                    websocket.send(onClosePacket)#}
+{#                };#}
+
                 websocket.onmessage = function (event) {
                     var packet;
 
@@ -134,25 +132,23 @@
                     }
 
                     switch (packet.type) {
-                        case "new-dialog":
-                            // TODO: add new dialog to dialog_list
-                            break;
-                        case "user-not-found":
-                            // TODO: dispay some kind of an error that the user is not found
-                            break;
-                        case "user-status-changed":
-                            // TODO: user went online-offline
-                            break;
+                        case "users-changed":
+                            addNewUser(packet);
+                            break
 
                         case "new-message":
                             addNewMessage(packet);
+                            break;
+
+                        case "new-message":
+                            console.log('some one is typing...');
                             break;
 
                         default:
                             console.log('error: ', event)
                     }
                 }
-            }
+             }
 
             function sendMessage(message) {
                 var opponent_username;
@@ -185,6 +181,8 @@
                 sendMessage($chatInput.val());
                 $chatInput.val('')
             });
+            setupChatWebSocket();
+            scrollToLastMessage();
         });
 
     </script>

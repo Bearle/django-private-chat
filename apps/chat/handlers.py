@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.template.defaultfilters import date as dj_date
 
 from apps.chat import channels, models, router
+from .utils import get_user_from_session
 
 logger = logging.getLogger('apps.chat')
 ws_connections = {}
@@ -58,7 +59,10 @@ def new_messages_handler(stream):
             sender=user,
             text=packet['message']
         )
-
+        user_owner = get_user_from_session(packet['session_key']).username
+        user_opponent = packet['opponent_username']
+        if (user_owner, user_opponent) in ws_connections:
+            target_message(ws_connections[(user_owner, user_opponent)], msg)
         packet['created'] = dj_date(msg.created, "DATETIME_FORMAT")
 
         # Create new message
@@ -97,9 +101,12 @@ def main_handler(websocket, path):
     """
 
     # Get users name from the path
-    username = urllib.parse.unquote(path[1:])
+    path = path.split('/')
+    username = path[2]
+    session_id = path[1]
+    user_owner = get_user_from_session(session_id).username
     # Persist users connection, associate user w/a unique ID
-    ws_connections[websocket] = (username, str(uuid.uuid4()))
+    ws_connections[(user_owner, username)] = websocket
 
     # While the websocket is open, listen for incoming messages/events
     # if unable to listening for messages/events, then disconnect the client
@@ -117,4 +124,4 @@ def main_handler(websocket, path):
         # TODO: alert the other user that this user went offline
         pass
     finally:
-        del ws_connections[websocket]
+        del ws_connections[(user_owner, username)]
