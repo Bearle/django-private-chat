@@ -10,12 +10,17 @@
         <ul>
             {% for dialog in object_list %}
                 <li>
-
-                    <a href="{% if dialog.owner == request.user %}
-                        {% url 'dialogs_detail' dialog.opponent.username %}
-                        {% else %}
-                        {% url 'dialogs_detail' dialog.owner.username %}
-                        {% endif %}" class="btn btn-primary">{{ dialog }}</a>
+                    {% if dialog.owner == request.user %}
+                        {% with dialog.opponent.username as username %}
+                            <a href="{% url 'dialogs_detail' username %}"
+                                class="btn btn-primary">Диалог с {{ username }}</a>
+                        {% endwith %}
+                    {% else %}
+                        {% with dialog.owner.username as username %}
+                             <a href="{% url 'dialogs_detail' username %}"
+                                class="btn btn-primary">Диалог с {{ username }}</a>
+                        {% endwith %}
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
@@ -127,7 +132,13 @@
 
 
             function setupChatWebSocket() {
-                websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/{{ active_dialog.opponent.username }}');
+                 var opponent_username;
+                {% if active_dialog.owner == request.user %}
+                        opponent_username = "{{ active_dialog.opponent.username }}";
+                {% else %}
+                        opponent_username = "{{ active_dialog.owner.username }}";
+                {% endif %}
+                websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/'+opponent_username);
                 ////////////////////////////////////////////////////////////////
                 //TODO: online-offline
                 {% comment %}
@@ -180,7 +191,7 @@
              }
 
             function sendMessage(message) {
-                var opponent_username;
+                 var opponent_username;
                 {% if active_dialog.owner == request.user %}
                         opponent_username = "{{ active_dialog.opponent.username }}";
                 {% else %}
