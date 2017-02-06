@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.template.defaultfilters import date as dj_date
 
 from apps.chat import channels, models, router
-from .utils import get_user_from_session
+from .utils import get_user_from_session, get_dialogs_with_user
 
 logger = logging.getLogger('apps.chat')
 ws_connections = {}
@@ -47,28 +47,35 @@ def new_messages_handler(stream):
     # TODO: handle no user found exception
     while True:
         packet = yield from stream.get()
-        user_set = get_user_model().objects.filter(first_name=packet['username'].split(' ')[0],
-                                                   last_name=packet['username'].split(' ')[1])
-        if len(user_set) > 0:
-            user = user_set[0]
-        else:
-            user = None
-        # Save the message
-        msg = models.Message.objects.create(
-            dialog=models.Dialog.objects.all()[0],
-            sender=user,
-            text=packet['message']
-        )
-        user_owner = get_user_from_session(packet['session_key']).username
-        user_opponent = packet['opponent_username']
-        if (user_owner, user_opponent) in ws_connections:
-            target_message(ws_connections[(user_owner, user_opponent)], msg)
-        packet['created'] = dj_date(msg.created, "DATETIME_FORMAT")
+        session_id = packet.get('session_key')
+        msg = packet.get('message')
+        username_opponent = packet.get('username')
+        if session_id and msg and username_opponent:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                user_opponent = get_user_model().objects.get(username=username_opponent)
+                dialog = get_dialogs_with_user(user_owner, user_opponent)
+                if len(dialog) > 0:
+                    # Save the message
+                    msg = models.Message.objects.create(
+                        dialog=dialog[0],
+                        sender=user_owner,
+                        text=packet['message']
+                    )
 
-        # Create new message
-        yield from fanout_message(ws_connections.keys(), packet)
+                    packet['created'] = dj_date(msg.created, "DATETIME_FORMAT")
+                    packet['sender_name'] = msg.sender.username
 
-#TODO: use for online/offline status
+                    # Send the message
+                    connections = []
+                    if (user_owner.username, user_opponent.username) in ws_connections:
+                        connections.append(ws_connections[(user_owner.username, user_opponent.username)])
+                    if (user_opponent.username, user_owner.username) in ws_connections:
+                        connections.append(ws_connections[(user_opponent.username, user_owner.username)])
+                    yield from fanout_message(connections, packet)
+
+
+# TODO: use for online/offline status
 @asyncio.coroutine
 def users_changed_handler(stream):
     """Sends connected client list of currently active users in the chatroom
@@ -104,24 +111,26 @@ def main_handler(websocket, path):
     path = path.split('/')
     username = path[2]
     session_id = path[1]
-    user_owner = get_user_from_session(session_id).username
-    # Persist users connection, associate user w/a unique ID
-    ws_connections[(user_owner, username)] = websocket
+    user_owner = get_user_from_session(session_id)
+    if user_owner:
+        user_owner = user_owner.username
+        # Persist users connection, associate user w/a unique ID
+        ws_connections[(user_owner, username)] = websocket
 
-    # While the websocket is open, listen for incoming messages/events
-    # if unable to listening for messages/events, then disconnect the client
-    try:
-        while websocket.open:
-            data = yield from websocket.recv()
-            if not data: continue
-            logger.debug(data)
-            try:
-                yield from router.MessageRouter(data)() #TODO: WTF
-            except Exception as e:
-                logger.error('could not route msg', e)
+        # While the websocket is open, listen for incoming messages/events
+        # if unable to listening for messages/events, then disconnect the client
+        try:
+            while websocket.open:
+                data = yield from websocket.recv()
+                if not data: continue
+                logger.debug(data)
+                try:
+                    yield from router.MessageRouter(data)()  # TODO: WTF
+                except Exception as e:
+                    logger.error('could not route msg', e)
 
-    except websockets.exceptions.InvalidState:  # User disconnected
-        # TODO: alert the other user that this user went offline
-        pass
-    finally:
-        del ws_connections[(user_owner, username)]
+        except websockets.exceptions.InvalidState:  # User disconnected
+            # TODO: alert the other user that this user went offline
+            pass
+        finally:
+            del ws_connections[(user_owner, username)]

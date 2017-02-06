@@ -3,6 +3,7 @@
 
 
 {% block content %}
+    <input id="owner_username" type="hidden" value="{{ request.user.username }}">
     <div class="container">
     <div class="col-md-3">
         <div class="user-list-div">
@@ -55,8 +56,16 @@
 
     {% verbatim %}
     <script id="chat-message-template" type="text/x-handlebars-template">
+        <div class="row">
+            <p class="{{#if }}{{else}}{{/if}}">
+                <span class="username">{{ msg.sender.username }}:</span>
+                {{ msg.text }}
+                <span class="timestamp">&ndash; <span
+                        data-livestamp="{{ msg.created }}">{{ msg.created }}</span></span>
+            </p>
+        </div>
         <p>
-            <span class="username">{{ msg.username }}:</span>
+            <span class="username">{{ msg.sender_name }}:</span>
             {{ msg.message }}
             <span class="timestamp">&ndash; <span data-livestamp="{{ msg.created}}">{{ msg.created }}</span></span>
         </p>
@@ -87,7 +96,20 @@
             }
 
             function addNewMessage(packet) {
-                var msgElem = generateMessage(packet);
+                var msg_class="";
+                if (packet['sender_name'] ==  $("#owner_username").val()){
+                    msg_class="pull-left";
+                } else {
+                    msg_class="pull-right";
+                }
+                var msgElem =
+                $('<div class="row">' +
+                    '<p class="'+msg_class+'">' +
+                        '<span class="username">'+packet['sender_name']+':</span>' +
+                            packet['message'] +
+                        '<span class="timestamp">&ndash; <span data-livestamp="'+packet['created']+'">'+packet['created']+'</span></span> ' +
+                    '</p> ' +
+                  '</div>');
                 $('#messages').append(msgElem);
                 scrollToLastMessage()
             }
@@ -106,20 +128,25 @@
 
             function setupChatWebSocket() {
                 websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/{{ active_dialog.opponent.username }}');
-{#                websocket.onopen = function (event) {#}
-{#                    var onConnectPacket = JSON.stringify({#}
-{#                        type: "new-user",#}
-{#                        username: getUsername(),#}
-{#                    });#}
-{#                    console.log('connected, sending:', onConnectPacket);#}
-{#                    websocket.send(onConnectPacket)#}
-{#                };#}
-{##}
-{#                websocket.onclose = function (event) {#}
-{#                    console.log('disconnected');#}
-{#                    var onClosePacket = JSON.stringify({type: 'close'});#}
-{#                    websocket.send(onClosePacket)#}
-{#                };#}
+                ////////////////////////////////////////////////////////////////
+                //TODO: online-offline
+                {% comment %}
+                websocket.onopen = function (event) {
+                    var onConnectPacket = JSON.stringify({
+                        type: "start-dialog",
+                        session_key: {{ request.session.session_key }}
+                    });
+                    console.log('connected, sending:', onConnectPacket);
+                    websocket.send(onConnectPacket)
+                };
+
+                websocket.onclose = function (event) {
+                    console.log('disconnected');
+                    var onClosePacket = JSON.stringify({type: 'close'});
+                    websocket.send(onClosePacket)
+                };
+                {% endcomment %}
+                ////////////////////////////////////////////////////////////////
 
                 websocket.onmessage = function (event) {
                     var packet;
@@ -132,16 +159,18 @@
                     }
 
                     switch (packet.type) {
-                        case "users-changed":
-                            addNewUser(packet);
-                            break
-
-                        case "new-message":
-                            addNewMessage(packet);
+                        case "new-dialog":
+                            // TODO: add new dialog to dialog_list
+                            break;
+                        case "user-not-found":
+                            // TODO: dispay some kind of an error that the user is not found
+                            break;
+                        case "user-status-changed":
+                            // TODO: user went online-offline
                             break;
 
                         case "new-message":
-                            console.log('some one is typing...');
+                            addNewMessage(packet);
                             break;
 
                         default:

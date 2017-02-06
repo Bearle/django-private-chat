@@ -1,5 +1,7 @@
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
+from apps.chat import models
+from django.db.models import Q
 
 
 def get_user_from_session(session_key):
@@ -13,3 +15,8 @@ def get_user_from_session(session_key):
     uid = session_data.get('_auth_user_id')
     user = get_user_model().objects.filter(id=uid).first()  # get object or none
     return user
+
+
+def get_dialogs_with_user(user_1, user_2):
+    return models.Dialog.objects.filter(
+        Q(owner=user_1, opponent=user_2) | Q(opponent=user_1, owner=user_2))
