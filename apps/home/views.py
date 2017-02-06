@@ -52,7 +52,7 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
                 dialog = dialog[0]
             context['active_dialog'] = dialog
         else:
-            context['active_dialog'] = self.queryset[0]
+            context['active_dialog'] = self.object_list[0]
         context['ws_server_path'] = 'ws://{}:{}/'.format(
             settings.CHAT_WS_SERVER_HOST,
             settings.CHAT_WS_SERVER_PORT,
