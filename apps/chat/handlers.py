@@ -87,6 +87,31 @@ def gone_online(stream):
         else:
             pass  # no session id
 
+@asyncio.coroutine
+def check_online(stream):
+    while True:
+        packet = yield from stream.get()
+        session_id = packet.get('session_key')
+        opponent_username = packet.get('username')
+        if session_id and opponent_username:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                # Find all connections including user_owner as opponent
+                online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
+                logger.debug(f'User {user_owner.username} has {len(online_opponents)} opponents online')
+                # Send user online statuses of his opponents
+                socket = ws_connections.get((user_owner.username, opponent_username))
+                if socket:
+                    online_opponents_usernames = [i[0] for i in online_opponents]
+                    yield from fanout_message(socket,{'type': 'gone-online', 'usernames': online_opponents_usernames})
+                else:
+                    pass  # socket for the pair user_owner.username, opponent_username not found
+                    # this can be in case the user has already gone offline
+            else:
+                pass  # invalid session id
+        else:
+            pass  # no session id or opponent username
+
 
 @asyncio.coroutine
 def gone_offline(stream):
@@ -94,8 +119,22 @@ def gone_offline(stream):
     Distributes the users online status to everyone he has dialog with
     """
     while True:
-        yield from stream.get()
-        packet = {}
+        packet = yield from stream.get()
+        session_id = packet.get('session_key')
+        if session_id:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                logger.debug(f'User {user_owner.username} gone offline')
+                # find all connections including user_owner as opponent,
+                #  send them a message that the user has gone offline
+                online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
+                online_opponents_sockets = [ws_connections[i] for i in online_opponents]
+                yield from fanout_message(online_opponents_sockets,
+                                          {'type': 'gone-offline', 'username': user_owner.username})
+            else:
+                pass  # invalid session id
+        else:
+            pass  # no session id
         logger.debug(packet)
         yield from fanout_message(ws_connections.keys(), packet)
 

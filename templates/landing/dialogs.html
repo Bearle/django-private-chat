@@ -155,8 +155,6 @@
                         opponent_username = "{{ active_dialog.owner.username }}";
                 {% endif %}
                 websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/'+opponent_username);
-                ////////////////////////////////////////////////////////////////
-                //TODO: online-offline
 
                 websocket.onopen = function (event) {
                     var opponent_username;
@@ -174,14 +172,33 @@
                     console.log('connected, sending:', onConnectPacket);
                     websocket.send(onConnectPacket)
                 };
-                {% comment %}
-                websocket.onclose = function (event) {
-                    console.log('disconnected');
-                    var onClosePacket = JSON.stringify({type: 'close'});
-                    websocket.send(onClosePacket)
+
+{#                websocket.onclose = function (event) {#}
+{##}
+{#                    var onClosePacket = JSON.stringify({#}
+{#                        type: "offline",#}
+{#                        session_key: '{{ request.session.session_key }}',#}
+{#                        username: opponent_username,#}
+{#                      Sending username because to let opponnent know that the user went offline#}
+{#                    });#}
+{#                    console.log('disconnected, sending:',onClosePacket);#}
+{#                    websocket.send(onClosePacket)#}
+{#                };#}
+
+
+                window.onbeforeunload = function () {
+
+                    var onClosePacket = JSON.stringify({
+                        type: "offline",
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+{#                      Sending username because to let opponnent know that the user went offline#}
+                    });
+                    console.log('unloading, sending:',onClosePacket);
+                    websocket.send(onClosePacket);
+                    websocket.close();
                 };
-                {% endcomment %}
-                ////////////////////////////////////////////////////////////////
+
 
                 websocket.onmessage = function (event) {
                     var packet;
@@ -204,11 +221,18 @@
                             if (packet.usernames.indexOf(opponent_username)!= -1)
                             {
                                 gone_online();
+                            } else{
+                                gone_offline();
                             }
                             //TODO: check for other usernames, give them online dots in the list on the left
                             break;
                         case "gone-offline":
-                            gone_offline();
+                            if (packet.username == opponent_username){
+                                gone_offline();
+                            } else {
+                                // mark their dialogs in list as offline
+                            }
+
                             break;
                         case "new-message":
                             addNewMessage(packet);
