@@ -1,5 +1,5 @@
 from test_plus.test import TestCase
-from .models import *
+from apps.chat.models import *
 
 
 class DialogMethodTest(TestCase):
@@ -9,7 +9,7 @@ class DialogMethodTest(TestCase):
         self.dialog.opponent = self.make_user(username="opuser")
 
     def test_str_method(self):
-        self.assertEqual(str(self.dialog), "Диалог между owuser и opuser")
+        self.assertEqual(str(self.dialog), "Диалог с opuser")
 
 
 class MessageMethodTest(TestCase):
@@ -25,7 +25,8 @@ class MessageMethodTest(TestCase):
         self.message.save()
 
     def test_str_method(self):
-        self.assertEqual(str(self.message), "Сообщение пользователя owuser в Диалог между owuser и opuser")
+        self.assertEqual(str(self.message), "owuser(" +
+                         self.message.modified.strftime('%x %X') + ") - 'text about something interesting'")
 
     def test_soft_delete(self):
         msg = self.message
