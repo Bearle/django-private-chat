@@ -41,6 +41,66 @@ def fanout_message(connections, payload):
 
 
 @asyncio.coroutine
+def gone_online(stream):
+    """
+    Distributes the users online status to everyone he has dialog with
+    """
+    while True:
+        packet = yield from stream.get()
+        session_id = packet.get('session_key')
+        opponent_username = packet.get('username')
+        if session_id:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                sockets = []
+                usernames = []
+
+                logger.debug(f'User {user_owner.username} gone online')
+                # find all connections including user_owner as opponent, send them a message that the user has gone online
+                online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
+                online_opponents_sockets = [ws_connections[i] for i in online_opponents]
+                # result = yield from fanout_message(online_opponents_sockets,
+                #                           {'type': 'gone-online', 'usernames': [user_owner.username]})
+                sockets += online_opponents_sockets
+                usernames += [user_owner.username]
+                if opponent_username:
+                    # Send user online statuses of his opponents
+                    socket = ws_connections.get((user_owner.username, opponent_username))
+                    if socket:
+                        online_opponents_usernames = [i[0] for i in online_opponents]
+                        sockets += [socket]
+                        usernames += online_opponents_usernames
+
+
+                        # yield from fanout_message(socket,
+                        #                {'type': 'gone-online', 'usernames': online_opponents_usernames})
+                    else:
+                        pass  # socket for the pair user_owner.username, opponent_username not found
+
+                else:
+                    # no opponent username
+                    pass
+
+                yield from fanout_message(sockets, {'type': 'gone-online', 'usernames': usernames})
+            else:
+                pass  # invalid session id
+        else:
+            pass  # no session id
+
+
+@asyncio.coroutine
+def gone_offline(stream):
+    """
+    Distributes the users online status to everyone he has dialog with
+    """
+    while True:
+        yield from stream.get()
+        packet = {}
+        logger.debug(packet)
+        yield from fanout_message(ws_connections.keys(), packet)
+
+
+@asyncio.coroutine
 def new_messages_handler(stream):
     """Saves a new chat message to db and distributes msg to connected users
     """
@@ -73,6 +133,12 @@ def new_messages_handler(stream):
                     if (user_opponent.username, user_owner.username) in ws_connections:
                         connections.append(ws_connections[(user_opponent.username, user_owner.username)])
                     yield from fanout_message(connections, packet)
+                else:
+                    pass  # no dialog found
+            else:
+                pass  # no user_owner
+        else:
+            pass  # missing one of params
 
 
 # TODO: use for online/offline status
@@ -134,3 +200,5 @@ def main_handler(websocket, path):
             pass
         finally:
             del ws_connections[(user_owner, username)]
+    else:
+        logger.info(f"Got invalid session_id attempt to connect {session_id}")

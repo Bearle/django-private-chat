@@ -28,6 +28,15 @@
     </div>
     <div class="col-md-9">
         <div class="row">
+            <p>
+                {% if active_dialog.owner == request.user %}
+                    {{ active_dialog.opponent.username }}
+                {% else %}
+                    {{ active_dialog.owner.username }}
+                {% endif %}
+            </p>
+            <p class="text-success" id="online-status" style="display: none">Online</p>
+            <p class="text-danger" id="offline-status" style="display: none">Offline</p>
             <div class="messages-container">
                 <div id="messages" class="messages">
                     {% for msg in active_dialog.messages.all %}
@@ -129,7 +138,14 @@
                 return tmpl({msg: context})
             }
 
-
+            function gone_online(){
+                $("#offline-status").hide();
+                $("#online-status").show();
+            }
+            function gone_offline() {
+                $("#online-status").hide();
+                $("#offline-status").show();
+            }
 
             function setupChatWebSocket() {
                  var opponent_username;
@@ -141,16 +157,24 @@
                 websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/'+opponent_username);
                 ////////////////////////////////////////////////////////////////
                 //TODO: online-offline
-                {% comment %}
+
                 websocket.onopen = function (event) {
+                    var opponent_username;
+                    {% if active_dialog.owner == request.user %}
+                        opponent_username = "{{ active_dialog.opponent.username }}";
+                    {% else %}
+                        opponent_username = "{{ active_dialog.owner.username }}";
+                    {% endif %}
                     var onConnectPacket = JSON.stringify({
-                        type: "start-dialog",
-                        session_key: {{ request.session.session_key }}
+                        type: "online",
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+{#                      Sending username because the user needs to know if his opponent is online #}
                     });
                     console.log('connected, sending:', onConnectPacket);
                     websocket.send(onConnectPacket)
                 };
-
+                {% comment %}
                 websocket.onclose = function (event) {
                     console.log('disconnected');
                     var onClosePacket = JSON.stringify({type: 'close'});
@@ -176,10 +200,16 @@
                         case "user-not-found":
                             // TODO: dispay some kind of an error that the user is not found
                             break;
-                        case "user-status-changed":
-                            // TODO: user went online-offline
+                        case "gone-online":
+                            if (packet.usernames.indexOf(opponent_username)!= -1)
+                            {
+                                gone_online();
+                            }
+                            //TODO: check for other usernames, give them online dots in the list on the left
                             break;
-
+                        case "gone-offline":
+                            gone_offline();
+                            break;
                         case "new-message":
                             addNewMessage(packet);
                             break;
