@@ -12,13 +12,13 @@
                 <li>
                     {% if dialog.owner == request.user %}
                         {% with dialog.opponent.username as username %}
-                            <a href="{% url 'dialogs_detail' username %}"
-                                class="btn btn-primary">Диалог с {{ username }}</a>
+                            <a href="{% url 'dialogs_detail' username %}" id="user-{{ username}}"
+                                class="btn btn-danger">Диалог с {{ username }}</a>
                         {% endwith %}
                     {% else %}
                         {% with dialog.owner.username as username %}
-                             <a href="{% url 'dialogs_detail' username %}"
-                                class="btn btn-primary">Диалог с {{ username }}</a>
+                             <a href="{% url 'dialogs_detail' username %}" id="user-{{ username}}"
+                                class="btn btn-danger">Диалог с {{ username }}</a>
                         {% endwith %}
                     {% endif %}
                 </li>
@@ -110,20 +110,20 @@
             }
 
             function addNewMessage(packet) {
-                var msg_class="";
-                if (packet['sender_name'] ==  $("#owner_username").val()){
-                    msg_class="pull-left";
+                var msg_class = "";
+                if (packet['sender_name'] == $("#owner_username").val()) {
+                    msg_class = "pull-left";
                 } else {
-                    msg_class="pull-right";
+                    msg_class = "pull-right";
                 }
                 var msgElem =
-                $('<div class="row">' +
-                    '<p class="'+msg_class+'">' +
-                        '<span class="username">'+packet['sender_name']+':</span>' +
-                            packet['message'] +
-                        '<span class="timestamp">&ndash; <span data-livestamp="'+packet['created']+'">'+packet['created']+'</span></span> ' +
-                    '</p> ' +
-                  '</div>');
+                    $('<div class="row">' +
+                        '<p class="' + msg_class + '">' +
+                        '<span class="username">' + packet['sender_name'] + ':</span>' +
+                        packet['message'] +
+                        '<span class="timestamp">&ndash; <span data-livestamp="' + packet['created'] + '">' + packet['created'] + '</span></span> ' +
+                        '</p> ' +
+                        '</div>');
                 $('#messages').append(msgElem);
                 scrollToLastMessage()
             }
@@ -138,23 +138,33 @@
                 return tmpl({msg: context})
             }
 
-            function gone_online(){
+            function setUserOnlineOffline(username, online) {
+                var elem = $("#user-" + username);
+                if (online) {
+                    elem.attr("class", "btn btn-success");
+                } else {
+                    elem.attr("class", "btn btn-danger");
+                }
+            }
+
+            function gone_online() {
                 $("#offline-status").hide();
                 $("#online-status").show();
             }
+
             function gone_offline() {
                 $("#online-status").hide();
                 $("#offline-status").show();
             }
 
             function setupChatWebSocket() {
-                 var opponent_username;
+                var opponent_username;
                 {% if active_dialog.owner == request.user %}
-                        opponent_username = "{{ active_dialog.opponent.username }}";
+                    opponent_username = "{{ active_dialog.opponent.username }}";
                 {% else %}
-                        opponent_username = "{{ active_dialog.owner.username }}";
+                    opponent_username = "{{ active_dialog.owner.username }}";
                 {% endif %}
-                websocket = new WebSocket(base_ws_server_path +'{{ request.session.session_key }}/'+opponent_username);
+                websocket = new WebSocket(base_ws_server_path + '{{ request.session.session_key }}/' + opponent_username);
 
                 websocket.onopen = function (event) {
                     var opponent_username;
@@ -163,27 +173,36 @@
                     {% else %}
                         opponent_username = "{{ active_dialog.owner.username }}";
                     {% endif %}
+
+                    var onOnlineCheckPacket = JSON.stringify({
+                        type: "check-online",
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username
+                        {#                      Sending username because the user needs to know if his opponent is online #}
+                    });
                     var onConnectPacket = JSON.stringify({
                         type: "online",
-                        session_key: '{{ request.session.session_key }}',
-                        username: opponent_username,
-{#                      Sending username because the user needs to know if his opponent is online #}
+                        session_key: '{{ request.session.session_key }}'
+
                     });
+
                     console.log('connected, sending:', onConnectPacket);
-                    websocket.send(onConnectPacket)
+                    websocket.send(onConnectPacket);
+                    console.log('checking online opponents with:', onOnlineCheckPacket);
+                    websocket.send(onOnlineCheckPacket);
                 };
 
-{#                websocket.onclose = function (event) {#}
-{##}
-{#                    var onClosePacket = JSON.stringify({#}
-{#                        type: "offline",#}
-{#                        session_key: '{{ request.session.session_key }}',#}
-{#                        username: opponent_username,#}
-{#                      Sending username because to let opponnent know that the user went offline#}
-{#                    });#}
-{#                    console.log('disconnected, sending:',onClosePacket);#}
-{#                    websocket.send(onClosePacket)#}
-{#                };#}
+                {#                websocket.onclose = function (event) {#}
+                {##}
+                {#                    var onClosePacket = JSON.stringify({#}
+                {#                        type: "offline",#}
+                {#                        session_key: '{{ request.session.session_key }}',#}
+                {#                        username: opponent_username,#}
+                {#                      Sending username because to let opponnent know that the user went offline#}
+                {#                    });#}
+                {#                    console.log('disconnected, sending:',onClosePacket);#}
+                {#                    websocket.send(onClosePacket)#}
+                {#                };#}
 
 
                 window.onbeforeunload = function () {
@@ -192,9 +211,9 @@
                         type: "offline",
                         session_key: '{{ request.session.session_key }}',
                         username: opponent_username,
-{#                      Sending username because to let opponnent know that the user went offline#}
+                        {# Sending username because to let opponnent know that the user went offline #}
                     });
-                    console.log('unloading, sending:',onClosePacket);
+                    console.log('unloading, sending:', onClosePacket);
                     websocket.send(onClosePacket);
                     websocket.close();
                 };
@@ -218,21 +237,20 @@
                             // TODO: dispay some kind of an error that the user is not found
                             break;
                         case "gone-online":
-                            if (packet.usernames.indexOf(opponent_username)!= -1)
-                            {
+                            if (packet.usernames.indexOf(opponent_username) != -1) {
                                 gone_online();
-                            } else{
+                            } else {
                                 gone_offline();
                             }
-                            //TODO: check for other usernames, give them online dots in the list on the left
+                            for (var i = 0; i < packet.usernames.length; ++i) {
+                                setUserOnlineOffline(packet.usernames[i], true);
+                            }
                             break;
                         case "gone-offline":
-                            if (packet.username == opponent_username){
+                            if (packet.username == opponent_username) {
                                 gone_offline();
-                            } else {
-                                // mark their dialogs in list as offline
                             }
-
+                            setUserOnlineOffline(packet.username, false);
                             break;
                         case "new-message":
                             addNewMessage(packet);
@@ -242,14 +260,14 @@
                             console.log('error: ', event)
                     }
                 }
-             }
+            }
 
             function sendMessage(message) {
-                 var opponent_username;
+                var opponent_username;
                 {% if active_dialog.owner == request.user %}
-                        opponent_username = "{{ active_dialog.opponent.username }}";
+                    opponent_username = "{{ active_dialog.opponent.username }}";
                 {% else %}
-                        opponent_username = "{{ active_dialog.owner.username }}";
+                    opponent_username = "{{ active_dialog.owner.username }}";
                 {% endif %}
                 var newMessagePacket = JSON.stringify({
                     type: 'new-message',

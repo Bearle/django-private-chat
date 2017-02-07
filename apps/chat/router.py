@@ -13,6 +13,7 @@ class MessageRouter(object):
         'new-user': channels.users_changed,
         'online': channels.online,
         'offline':channels.offline,
+        'check-online':channels.check_online,
         # 'is-typing': new_users_sender,
     }
 

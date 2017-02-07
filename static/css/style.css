@@ -4,7 +4,7 @@ body {
 }
 
 .messages-container {
-    height: 500px;
+    height: 300px;
     border: 1px solid #DDD;
     position: relative;
 }
@@ -13,7 +13,7 @@ body {
     box-sizing: border-box;
     padding: 20px;
     overflow: auto;
-    height: 498px;
+    height: 300px;
 }
 
 .user-list {
