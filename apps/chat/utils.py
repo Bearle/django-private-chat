@@ -18,5 +18,11 @@ def get_user_from_session(session_key):
 
 
 def get_dialogs_with_user(user_1, user_2):
+    """
+    gets the dialog between user_1 and user_2
+    :param user_1: the first user in dialog (owner or opponent)
+    :param user_2: the second user in dialog (owner or opponent)
+    :return: queryset which include dialog between user_1 and user_2 (queryset can be empty)
+    """
     return models.Dialog.objects.filter(
         Q(owner=user_1, opponent=user_2) | Q(opponent=user_1, owner=user_2))
