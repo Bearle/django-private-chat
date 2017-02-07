@@ -11,7 +11,8 @@ class MessageRouter(object):
     MESSAGE_QUEUES = {
         'new-message': channels.new_messages,
         'new-user': channels.users_changed,
-        'start-dialog': channels.start_dialog,
+        'online': channels.online,
+        'offline':channels.offline,
         # 'is-typing': new_users_sender,
     }
 
