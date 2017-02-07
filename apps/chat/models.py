@@ -9,7 +9,7 @@ class Dialog(TimeStampedModel):
     opponent = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Собеседник владельца")
 
     def __str__(self):
-        return f"Диалог c {self.opponent.username}"
+        return f"Диалог с {self.opponent.username}"
 
 
 class Message(TimeStampedModel, SoftDeletableModel):
