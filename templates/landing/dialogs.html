@@ -64,6 +64,13 @@
                 </div>
             </div>
         </div>
+        <div id="typing-text">
+            {% if active_dialog.opponent.username != request.user.username %}
+            {{ active_dialog.opponent.username }} печатает
+            {% else %}
+            {{ active_dialog.owner.username }} печатает
+            {% endif %}
+        </div>
     </div>
 
     </div>
@@ -255,6 +262,12 @@
                         case "new-message":
                             addNewMessage(packet);
                             break;
+                        case "opponent-typing":
+                            $('#typing-text').show();
+                            break;
+                        case "opponent-not-typing":
+                            $('#typing-text').hide();
+                            break;
 
                         default:
                             console.log('error: ', event)
@@ -293,6 +306,35 @@
                 sendMessage($chatInput.val());
                 $chatInput.val('')
             });
+
+            setInterval(function () {
+                var opponent_username;
+                {% if active_dialog.owner == request.user %}
+                    opponent_username = "{{ active_dialog.opponent.username }}";
+                {% else %}
+                    opponent_username = "{{ active_dialog.owner.username }}";
+                {% endif %}
+                if ($('#chat-message').val()!=""){
+                    var packet = JSON.stringify({
+                        type: 'is-typing',
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+                        typing: 'yes'
+                    });
+                    websocket.send(packet);
+                }
+                else{
+                    var packet = JSON.stringify({
+                        type: 'is-typing',
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+                        typing: 'no'
+                    });
+                    websocket.send(packet);
+                }
+
+            }, 50)
+
             setupChatWebSocket();
             scrollToLastMessage();
         });

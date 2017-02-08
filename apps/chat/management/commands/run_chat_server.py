@@ -22,5 +22,6 @@ class Command(BaseCommand):
         asyncio.async(handlers.gone_online(channels.online))
         asyncio.async(handlers.check_online(channels.check_online))
         asyncio.async(handlers.gone_offline(channels.offline))
+        asyncio.async(handlers.is_typing_handler(channels.is_typing))
         loop = asyncio.get_event_loop()
         loop.run_forever()

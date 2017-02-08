@@ -182,6 +182,36 @@ def users_changed_handler(stream):
         yield from fanout_message(ws_connections.keys(), packet)
 
 
+
+@asyncio.coroutine
+def is_typing_handler(stream):
+    """
+    Show message to opponent if user is typing message
+    """
+    while True:
+        packet = yield from stream.get()
+        session_id = packet.get('session_key')
+        if session_id:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                user_opponent = packet.get('username')
+                # find all connections including user_owner as opponent,
+                #  send them a message that the user has gone offline
+
+                opponent_socket = ws_connections.get((user_opponent, user_owner.username))
+                if packet.get('typing') == 'yes':
+                    yield from target_message(opponent_socket,
+                                            {'type': 'opponent-typing', 'username': user_opponent})
+                else:
+                    yield from target_message(opponent_socket,
+                                            {'type': 'opponent-not-typing', 'username': user_opponent})
+            else:
+                pass  # invalid session id
+        else:
+            pass  # no session id
+
+
+
 @asyncio.coroutine
 def main_handler(websocket, path):
     """An Asyncio Task is created for every new websocket client connection

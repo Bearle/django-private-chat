@@ -14,7 +14,7 @@ class MessageRouter(object):
         'online': channels.online,
         'offline':channels.offline,
         'check-online':channels.check_online,
-        # 'is-typing': new_users_sender,
+        'is-typing': channels.is_typing,
     }
 
     def __init__(self, data):
