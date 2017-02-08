@@ -64,7 +64,7 @@
                 </div>
             </div>
         </div>
-        <div id="typing-text">
+        <div hidden id="typing-text">
             {% if active_dialog.opponent.username != request.user.username %}
             {{ active_dialog.opponent.username }} печатает
             {% else %}
