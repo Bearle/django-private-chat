@@ -28,15 +28,17 @@
     </div>
     <div class="col-md-9">
         <div class="row">
-            <p>
-                {% if active_dialog.owner == request.user %}
-                    {{ active_dialog.opponent.username }}
-                {% else %}
-                    {{ active_dialog.owner.username }}
-                {% endif %}
-            </p>
-            <p class="text-success" id="online-status" style="display: none">Online</p>
-            <p class="text-danger" id="offline-status" style="display: none">Offline</p>
+                <div class="col-md-3 col-md-offset-9">
+                    <span class="pull-right" hidden id="typing-text">
+                        <strong>{{ opponent_username }} печатает ...</strong>
+                    </span>
+                </div>
+                <p>
+                    {{ opponent_username }}
+                </p>
+                <p class="text-success" id="online-status" style="display: none">Online</p>
+                <p class="text-danger" id="offline-status" style="display: none">Offline</p>
+
             <div class="messages-container">
                 <div id="messages" class="messages">
                     {% for msg in active_dialog.messages.all %}
@@ -63,13 +65,6 @@
                     <input id="btn-send-message" type="submit" class="btn btn-primary pull-right send-message" style="margin-left: 10px;" value="Send message" />
                 </div>
             </div>
-        </div>
-        <div hidden id="typing-text">
-            {% if active_dialog.opponent.username != request.user.username %}
-            {{ active_dialog.opponent.username }} печатает
-            {% else %}
-            {{ active_dialog.owner.username }} печатает
-            {% endif %}
         </div>
     </div>
 
@@ -105,7 +100,9 @@
         $(document).ready(function () {
             var websocket = null;
 
-
+            function getOpponnentUsername(){
+                return "{{ opponent_username }}";
+            }
             // TODO: Use for adding new dialog
             function addNewUser(packet) {
                 $('#user-list').html('');
@@ -165,21 +162,11 @@
             }
 
             function setupChatWebSocket() {
-                var opponent_username;
-                {% if active_dialog.owner == request.user %}
-                    opponent_username = "{{ active_dialog.opponent.username }}";
-                {% else %}
-                    opponent_username = "{{ active_dialog.owner.username }}";
-                {% endif %}
+                var opponent_username = getOpponnentUsername();
                 websocket = new WebSocket(base_ws_server_path + '{{ request.session.session_key }}/' + opponent_username);
 
                 websocket.onopen = function (event) {
-                    var opponent_username;
-                    {% if active_dialog.owner == request.user %}
-                        opponent_username = "{{ active_dialog.opponent.username }}";
-                    {% else %}
-                        opponent_username = "{{ active_dialog.owner.username }}";
-                    {% endif %}
+                    var opponent_username = getOpponnentUsername();
 
                     var onOnlineCheckPacket = JSON.stringify({
                         type: "check-online",
@@ -263,10 +250,14 @@
                             addNewMessage(packet);
                             break;
                         case "opponent-typing":
-                            $('#typing-text').show();
-                            break;
-                        case "opponent-not-typing":
-                            $('#typing-text').hide();
+                            var typing_elem = $('#typing-text');
+                            if (!typing_elem.is(":visible")){
+                                typing_elem.fadeIn(500);
+                            } else {
+                                typing_elem.stop(true);
+                                typing_elem.fadeIn(0);
+                            }
+                            typing_elem.fadeOut(3000);
                             break;
 
                         default:
@@ -276,12 +267,7 @@
             }
 
             function sendMessage(message) {
-                var opponent_username;
-                {% if active_dialog.owner == request.user %}
-                    opponent_username = "{{ active_dialog.opponent.username }}";
-                {% else %}
-                    opponent_username = "{{ active_dialog.owner.username }}";
-                {% endif %}
+                var opponent_username = getOpponnentUsername();
                 var newMessagePacket = JSON.stringify({
                     type: 'new-message',
                     session_key: '{{ request.session.session_key }}',
@@ -296,6 +282,15 @@
                     sendMessage(this.value);
                     this.value = "";
                     return false
+                } else {
+                    var opponent_username = getOpponnentUsername();
+                    var packet = JSON.stringify({
+                        type: 'is-typing',
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+                        typing: true
+                    });
+                    websocket.send(packet);
                 }
             });
 
@@ -306,34 +301,6 @@
                 sendMessage($chatInput.val());
                 $chatInput.val('')
             });
-
-            setInterval(function () {
-                var opponent_username;
-                {% if active_dialog.owner == request.user %}
-                    opponent_username = "{{ active_dialog.opponent.username }}";
-                {% else %}
-                    opponent_username = "{{ active_dialog.owner.username }}";
-                {% endif %}
-                if ($('#chat-message').val()!=""){
-                    var packet = JSON.stringify({
-                        type: 'is-typing',
-                        session_key: '{{ request.session.session_key }}',
-                        username: opponent_username,
-                        typing: 'yes'
-                    });
-                    websocket.send(packet);
-                }
-                else{
-                    var packet = JSON.stringify({
-                        type: 'is-typing',
-                        session_key: '{{ request.session.session_key }}',
-                        username: opponent_username,
-                        typing: 'no'
-                    });
-                    websocket.send(packet);
-                }
-
-            }, 50)
 
             setupChatWebSocket();
             scrollToLastMessage();

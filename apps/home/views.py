@@ -48,6 +48,10 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
             context['active_dialog'] = dialog
         else:
             context['active_dialog'] = self.object_list[0]
+        if self.request.user == context['active_dialog'].owner:
+            context['opponent_username'] = context['active_dialog'].opponent.username
+        else:
+            context['opponent_username'] = context['active_dialog'].owner.username
         context['ws_server_path'] = 'ws://{}:{}/'.format(
             settings.CHAT_WS_SERVER_HOST,
             settings.CHAT_WS_SERVER_PORT,

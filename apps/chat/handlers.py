@@ -83,7 +83,7 @@ def check_online(stream):
                 socket = ws_connections.get((user_owner.username, opponent_username))
                 if socket:
                     online_opponents_usernames = [i[0] for i in online_opponents]
-                    yield from fanout_message([socket],
+                    yield from target_message(socket,
                                               {'type': 'gone-online', 'usernames': online_opponents_usernames})
                 else:
                     pass  # socket for the pair user_owner.username, opponent_username not found
@@ -182,7 +182,6 @@ def users_changed_handler(stream):
         yield from fanout_message(ws_connections.keys(), packet)
 
 
-
 @asyncio.coroutine
 def is_typing_handler(stream):
     """
@@ -191,25 +190,19 @@ def is_typing_handler(stream):
     while True:
         packet = yield from stream.get()
         session_id = packet.get('session_key')
-        if session_id:
+        user_opponent = packet.get('username')
+        typing = packet.get('typing')
+        if session_id and user_opponent and typing is not None:
             user_owner = get_user_from_session(session_id)
             if user_owner:
-                user_opponent = packet.get('username')
-                # find all connections including user_owner as opponent,
-                #  send them a message that the user has gone offline
-
                 opponent_socket = ws_connections.get((user_opponent, user_owner.username))
-                if packet.get('typing') == 'yes':
+                if typing:
                     yield from target_message(opponent_socket,
-                                            {'type': 'opponent-typing', 'username': user_opponent})
-                else:
-                    yield from target_message(opponent_socket,
-                                            {'type': 'opponent-not-typing', 'username': user_opponent})
+                                              {'type': 'opponent-typing', 'username': user_opponent})
             else:
                 pass  # invalid session id
         else:
-            pass  # no session id
-
+            pass  # no session id or user_opponent or typing
 
 
 @asyncio.coroutine
@@ -239,12 +232,11 @@ def main_handler(websocket, path):
                 if not data: continue
                 logger.debug(data)
                 try:
-                    yield from router.MessageRouter(data)()  # TODO: WTF
+                    yield from router.MessageRouter(data)()
                 except Exception as e:
                     logger.error('could not route msg', e)
 
         except websockets.exceptions.InvalidState:  # User disconnected
-            # TODO: alert the other user that this user went offline
             pass
         finally:
             del ws_connections[(user_owner, username)]
