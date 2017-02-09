@@ -192,7 +192,7 @@ def is_typing_handler(stream):
             user_owner = get_user_from_session(session_id)
             if user_owner:
                 opponent_socket = ws_connections.get((user_opponent, user_owner.username))
-                if typing:
+                if typing and opponent_socket:
                     yield from target_message(opponent_socket,
                                               {'type': 'opponent-typing', 'username': user_opponent})
             else:
