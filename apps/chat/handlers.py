@@ -5,9 +5,6 @@ import urllib
 import uuid
 import websockets
 from django.contrib.auth import get_user_model
-
-from django.template.defaultfilters import date as dj_date
-
 from apps.chat import channels, models, router
 from .utils import get_user_from_session, get_dialogs_with_user
 
@@ -140,8 +137,7 @@ def new_messages_handler(stream):
                         sender=user_owner,
                         text=packet['message']
                     )
-
-                    packet['created'] = dj_date(msg.created, "DATETIME_FORMAT")
+                    packet['created'] = msg.get_formatted_create_datetime()
                     packet['sender_name'] = msg.sender.username
 
                     # Send the message

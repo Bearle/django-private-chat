@@ -47,7 +47,7 @@
                                 <span class="username">{{ msg.sender.username }}:</span>
                                 {{ msg.text }}
                                 <span class="timestamp">&ndash; <span
-                                        data-livestamp="{{ msg.created }}">{{ msg.created }}</span></span>
+                                        data-livestamp="{{ msg.get_formatted_create_datetime}}">{{ msg.get_formatted_create_datetime }}</span></span>
                             </p>
                         </div>
                     {% endfor %}
@@ -123,9 +123,9 @@
                 var msgElem =
                     $('<div class="row">' +
                         '<p class="' + msg_class + '">' +
-                        '<span class="username">' + packet['sender_name'] + ':</span>' +
+                        '<span class="username">' + packet['sender_name'] + ': </span>' +
                         packet['message'] +
-                        '<span class="timestamp">&ndash; <span data-livestamp="' + packet['created'] + '">' + packet['created'] + '</span></span> ' +
+                        ' <span class="timestamp">&ndash; <span data-livestamp="' + packet['created'] + '"> ' + packet['created'] + '</span></span> ' +
                         '</p> ' +
                         '</div>');
                 $('#messages').append(msgElem);

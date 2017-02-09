@@ -2,6 +2,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel, SoftDeletableModel
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.template.defaultfilters import date as dj_date
 
 
 class Dialog(TimeStampedModel):
@@ -20,3 +21,6 @@ class Message(TimeStampedModel, SoftDeletableModel):
 
     def __str__(self):
         return f"{self.sender.username}({self.modified.strftime('%x %X')}) - '{self.text}'"
+
+    def get_formatted_create_datetime(self):
+        return dj_date(self.created, settings.DATETIME_FORMAT)
