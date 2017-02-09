@@ -5,11 +5,11 @@ django-private-chat
 .. image:: https://badge.fury.io/py/django-private-chat.svg
     :target: https://badge.fury.io/py/django-private-chat
 
-.. image:: https://travis-ci.org/delneg/django-private-chat.svg?branch=master
-    :target: https://travis-ci.org/delneg/django-private-chat
+.. image:: https://travis-ci.org/Bearle/django-private-chat.svg?branch=master
+    :target: https://travis-ci.org/Bearle/django-private-chat
 
-.. image:: https://codecov.io/gh/delneg/django-private-chat/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/delneg/django-private-chat
+.. image:: https://codecov.io/gh/Bearle/django-private-chat/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/Bearle/django-private-chat
 
 Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
 
