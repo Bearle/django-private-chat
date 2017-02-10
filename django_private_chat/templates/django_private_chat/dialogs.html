@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% block css %}
+    <link href="{% static "django_private_chat/css/django_private_chat.css" %}" rel="stylesheet" type="text/css" media="all">
+{% endblock css %}
 
 {% block content %}
     <input id="owner_username" type="hidden" value="{{ request.user.username }}">
