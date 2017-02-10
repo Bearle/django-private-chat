@@ -51,7 +51,16 @@ Add django-private-chat's URL patterns:
 Features
 --------
 
-* TODO
+* Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
+* One-to-one user chat
+* Works using WebSockets
+* Displays online/offline status
+* Display typing/not typing status
+* Soft deletable message model - be sure to keep messages to comply with message-keeping laws
+* TODO: add a dialog to the list when new one started
+* TODO: add user-not-found and other alerts
+* TODO: possible Redis backend intergration
+
 
 Running Tests
 -------------
