@@ -36,12 +36,14 @@ Add it to your `INSTALLED_APPS`:
     )
 
 Add the server & port for your asyncio server to settings:
+
 .. code-block:: python
 
     CHAT_WS_SERVER_HOST = 'localhost'
     CHAT_WS_SERVER_PORT = 5002
 
 It is possible to change messages datetime format using
+
 .. code-block:: python
 
     DATETIME_FORMAT
