@@ -62,6 +62,12 @@ Add django-private-chat's URL patterns:
     ]
 
 
+Now you can start a dialog using ::
+
+    /dialogs/some_existing_username
+
+
+
 Features
 --------
 
