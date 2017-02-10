@@ -25,6 +25,10 @@ Install django-private-chat::
 
     pip install django-private-chat
 
+Migrate::
+
+    python manage.py migrate django-private-chat
+
 Note: you can use this package with or without uvloop, just run either
 
 .. code-block:: python
