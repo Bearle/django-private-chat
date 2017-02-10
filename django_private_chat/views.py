@@ -12,22 +12,6 @@ from django.conf import settings
 from django.db.models import Q
 
 
-class MessageListView(LoginRequiredMixin, generic.ListView):
-    template_name = 'landing/home.html'
-    model = models.Message
-    ordering = 'created'
-    paginate_by = 50
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-
-        context['silly_name'] = self.request.user.get_full_name()
-        context['ws_server_path'] = 'ws://{}:{}/'.format(
-            settings.CHAT_WS_SERVER_HOST,
-            settings.CHAT_WS_SERVER_PORT,
-        )
-        return context
-
 
 class DialogListView(LoginRequiredMixin, generic.ListView):
     template_name = 'landing/dialogs.html'
@@ -62,9 +46,3 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class UserListView(LoginRequiredMixin, generic.ListView):
-    model = get_user_model()
-    # These next two lines tell the view to index lookups by username
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
-    template_name = 'landing/users.html'
