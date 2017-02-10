@@ -1,6 +1,6 @@
-=============================
+===================
 django-private-chat
-=============================
+===================
 
 .. image:: https://badge.fury.io/py/django-private-chat.svg
     :target: https://badge.fury.io/py/django-private-chat
@@ -35,6 +35,17 @@ Add it to your `INSTALLED_APPS`:
         ...
     )
 
+Add the server & port for your asyncio server to settings:
+.. code-block:: python
+
+    CHAT_WS_SERVER_HOST = 'localhost'
+    CHAT_WS_SERVER_PORT = 5002
+
+It is possible to change messages datetime format using
+.. code-block:: python
+
+    DATETIME_FORMAT
+
 Add django-private-chat's URL patterns:
 
 .. code-block:: python
@@ -48,10 +59,12 @@ Add django-private-chat's URL patterns:
         ...
     ]
 
+
 Features
 --------
 
 * Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
+* Translatable (uses ugettext and {% trans %} )
 * One-to-one user chat
 * Works using WebSockets
 * Displays online/offline status
