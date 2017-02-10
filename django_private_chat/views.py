@@ -1,64 +1,70 @@
-# -*- coding: utf-8 -*-
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    UpdateView,
-    ListView
-)
-
-from .models import (
-	Message,
-	Dialog,
-)
-
-
-class MessageCreateView(CreateView):
-
-    model = Message
+from django.views import generic
+from braces.views import LoginRequiredMixin
+try:
+    from django.urls import reverse
+except ModuleNotFoundError:
+    from django.core.urlresolvers import reverse
+from . import models
+from . import utils
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.db.models import Q
 
 
-class MessageDeleteView(DeleteView):
+class MessageListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'landing/home.html'
+    model = models.Message
+    ordering = 'created'
+    paginate_by = 50
 
-    model = Message
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
 
-
-class MessageDetailView(DetailView):
-
-    model = Message
-
-
-class MessageUpdateView(UpdateView):
-
-    model = Message
-
-
-class MessageListView(ListView):
-
-    model = Message
+        context['silly_name'] = self.request.user.get_full_name()
+        context['ws_server_path'] = 'ws://{}:{}/'.format(
+            settings.CHAT_WS_SERVER_HOST,
+            settings.CHAT_WS_SERVER_PORT,
+        )
+        return context
 
 
-class DialogCreateView(CreateView):
+class DialogListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'landing/dialogs.html'
+    model = models.Dialog
+    ordering = 'modified'
 
-    model = Dialog
+    def get_queryset(self):
+        dialogs = models.Dialog.objects.filter(Q(owner=self.request.user) | Q(opponent=self.request.user))
+        return dialogs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        if self.kwargs.get('username'):
+            # TODO: show alert that user is not found instead of 404
+            user = get_object_or_404(get_user_model(), username=self.kwargs.get('username'))
+            dialog = utils.get_dialogs_with_user(self.request.user, user)
+            if len(dialog) == 0:
+                dialog = models.Dialog.objects.create(owner=self.request.user, opponent=user)
+            else:
+                dialog = dialog[0]
+            context['active_dialog'] = dialog
+        else:
+            context['active_dialog'] = self.object_list[0]
+        if self.request.user == context['active_dialog'].owner:
+            context['opponent_username'] = context['active_dialog'].opponent.username
+        else:
+            context['opponent_username'] = context['active_dialog'].owner.username
+        context['ws_server_path'] = 'ws://{}:{}/'.format(
+            settings.CHAT_WS_SERVER_HOST,
+            settings.CHAT_WS_SERVER_PORT,
+        )
+        return context
 
 
-class DialogDeleteView(DeleteView):
-
-    model = Dialog
-
-
-class DialogDetailView(DetailView):
-
-    model = Dialog
-
-
-class DialogUpdateView(UpdateView):
-
-    model = Dialog
-
-
-class DialogListView(ListView):
-
-    model = Dialog
-
+class UserListView(LoginRequiredMixin, generic.ListView):
+    model = get_user_model()
+    # These next two lines tell the view to index lookups by username
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'landing/users.html'
