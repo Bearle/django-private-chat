@@ -1,5 +1,6 @@
 from django.views import generic
 from braces.views import LoginRequiredMixin
+
 try:
     from django.urls import reverse
 except ModuleNotFoundError:
@@ -12,9 +13,8 @@ from django.conf import settings
 from django.db.models import Q
 
 
-
 class DialogListView(LoginRequiredMixin, generic.ListView):
-    template_name = 'landing/dialogs.html'
+    template_name = 'django_private_chat/dialogs.html'
     model = models.Dialog
     ordering = 'modified'
 
@@ -44,5 +44,3 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
             settings.CHAT_WS_SERVER_PORT,
         )
         return context
-
-
