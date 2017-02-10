@@ -1,6 +1,6 @@
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
-from .models import Message,Dialog
+from .models import Dialog
 from django.db.models import Q
 
 
