@@ -25,6 +25,20 @@ Install django-private-chat::
 
     pip install django-private-chat
 
+Note: you can use this package with or without uvloop, just run either
+
+.. code-block:: python
+
+    python manage.py run_chat_server
+
+or run
+
+.. code-block:: python
+
+    python manage.py run_chat_server_uvloop
+
+
+
 Add it to your `INSTALLED_APPS`:
 
 .. code-block:: python

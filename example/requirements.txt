@@ -1,5 +1,4 @@
 # Your app requirements.
 -r ../requirements_test.txt
 
-# Your app in editable mode.
--e ../
+django-private-chat>=0.1.0
