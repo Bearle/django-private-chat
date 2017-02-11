@@ -13,6 +13,8 @@ django-private-chat
 
 Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
 
+![Image](https://github.com/Bearle/django-private-chat/blob/dev/screenshots/screen_1.jpg?raw=true "Image")
+
 Documentation
 -------------
 
