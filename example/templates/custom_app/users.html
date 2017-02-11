@@ -5,7 +5,7 @@
         {% for user in object_list %}
             {% if user != request.user %}
                 <p>{{ user.get_full_name }}</p>
-                <a href="{% url 'django_private_chat:dialogs_detail' user.username %}" class="btn btn-primary">
+                <a href="{% url 'dialogs_detail' user.username %}" class="btn btn-primary">
                     Chat with {{ user.username }}
                 </a>
             {% endif %}
