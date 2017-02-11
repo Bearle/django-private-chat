@@ -19,5 +19,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    # This might be reduntant, check later
     url(r'', include('django_private_chat.urls', namespace='django_private_chat')),
+    url(r'', include('custom_app.urls'))
 ]

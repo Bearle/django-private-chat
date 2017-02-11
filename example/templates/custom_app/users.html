@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>Here you can see users avaliable for chat, excluding yourself (chat with yourself is possible thought):</h3>
+    <div class="container">
+        {% for user in object_list %}
+            {% if user != request.user %}
+                <p>{{ user.get_full_name }}</p>
+                <a href="{% url 'django_private_chat:dialogs_detail' user.username %}" class="btn btn-primary">
+                    Chat with {{ user.username }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -26,6 +26,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CHAT_WS_SERVER_HOST = 'localhost'
+CHAT_WS_SERVER_PORT = 5002
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,9 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_private_chat',
+    'custom_app'
 
-    # if your app has other dependencies that need to be added to the site
-    # they should be added here
 ]
 
 MIDDLEWARE = [
@@ -114,7 +116,57 @@ USE_L10N = True
 
 USE_TZ = True
 
+DATETIME_FORMAT = "d.m.Y H:i:s"
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'verbose': {
+                'format':
+                    '%(levelname)s %(asctime)s %(module)s'
+                    ' %(process)d %(thread)d %(message)s'
+            },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple'
+            },
+            'mail_admins': {
+                'level': 'ERROR',
+                'class': 'django.utils.log.AdminEmailHandler',
+            }
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'propagate': True,
+                'level': 'INFO',
+            },
+            'django.request': {
+                'handlers': ['console'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
+            'django_private_chat': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+            'custom_app': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            }
+        }
+    }
