@@ -7,18 +7,24 @@ It can also be used to develop the app in place.
 To run this example, follow these instructions:
 
 1. Navigate to the `example` directory
-2. Install the requirements for the package:
+2. Create virtualenv with the desired python >= 3.4:
+
+        virtualenv venv -p python3
+        source venv/bin/activate
+        
+3. Install the requirements for the package:
 		
 		pip install -r requirements.txt
 		
-3. Make and apply migrations
-
-		python manage.py makemigrations
+4. Apply migrations:
 		
 		python manage.py migrate
 		
-4. Run the server
+5. Run the server
 
 		python manage.py runserver
 		
-5. Access from the browser at `http://127.0.0.1:8000`
+6. Run chat server in separate terminal
+        
+        python manage.py run_chat_server
+7. Access from the browser at `http://127.0.0.1:8000`
