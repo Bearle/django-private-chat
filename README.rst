@@ -51,7 +51,7 @@ Add it to your `INSTALLED_APPS`:
 
     INSTALLED_APPS = (
         ...
-        'django_private_chat.apps.DjangoPrivateChatConfig',
+        'django_private_chat',
         ...
     )
 
