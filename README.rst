@@ -77,7 +77,7 @@ Add django-private-chat's URL patterns:
 
     urlpatterns = [
         ...
-        url(r'^', include(django_private_chat_urls)),
+        url(r'^', include('django_private_chat.urls')),
         ...
     ]
 
