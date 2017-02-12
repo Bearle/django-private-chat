@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
 ]
 
-MIDDLEWARE = [
+l = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,7 +53,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+)
+
+from django import get_version
+from packaging import version
+
+if version.parse(get_version()) < version.parse("1.10"):
+    MIDDLEWARE_CLASSES = l
+else:
+    MIDDLEWARE = l
 
 ROOT_URLCONF = 'example.urls'
 
@@ -123,50 +131,50 @@ DATETIME_FORMAT = "d.m.Y H:i:s"
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'static')
-    ]
+    os.path.join(BASE_DIR, 'static')
+]
 LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'formatters': {
-            'verbose': {
-                'format':
-                    '%(levelname)s %(asctime)s %(module)s'
-                    ' %(process)d %(thread)d %(message)s'
-            },
-            'simple': {
-                'format': '%(levelname)s %(message)s'
-            },
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format':
+                '%(levelname)s %(asctime)s %(module)s'
+                ' %(process)d %(thread)d %(message)s'
         },
-        'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple'
-            },
-            'mail_admins': {
-                'level': 'ERROR',
-                'class': 'django.utils.log.AdminEmailHandler',
-            }
+        'simple': {
+            'format': '%(levelname)s %(message)s'
         },
-        'loggers': {
-            'django': {
-                'handlers': ['console'],
-                'propagate': True,
-                'level': 'INFO',
-            },
-            'django.request': {
-                'handlers': ['console'],
-                'level': 'ERROR',
-                'propagate': False,
-            },
-            'django_private_chat': {
-                'handlers': ['console'],
-                'level': 'DEBUG',
-            },
-            'custom_app': {
-                'handlers': ['console'],
-                'level': 'DEBUG',
-            }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django_private_chat': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'custom_app': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
         }
     }
+}

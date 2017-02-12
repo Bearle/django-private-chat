@@ -3,7 +3,7 @@ from braces.views import LoginRequiredMixin
 
 try:
     from django.urls import reverse
-except ModuleNotFoundError:
+except ImportError:
     from django.core.urlresolvers import reverse
 from . import models
 from . import utils
