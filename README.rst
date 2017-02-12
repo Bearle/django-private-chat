@@ -18,10 +18,16 @@ Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
 Documentation
 -------------
 
-The full documentation is at https://django-private-chat.readthedocs.io.
+The full documentation will be (soon) at https://django-private-chat.readthedocs.io , for now just check the docstrings =)
 
-Quickstart
-----------
+Example project
+---------------
+
+You can check out our example project by cloning the repo and heading into example/ directory.
+There is a README file for you to check, initial data to check out the chat included.
+
+Exsiting project quickstart
+---------------------------
 
 Install django-private-chat::
 
