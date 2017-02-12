@@ -19,6 +19,7 @@ To run this example, follow these instructions:
 4. Apply migrations:
 		
 		python manage.py migrate
+		python manage.py loaddata fixtures/init_data.json
 		
 5. Run the server
 
@@ -28,3 +29,5 @@ To run this example, follow these instructions:
         
         python manage.py run_chat_server
 7. Access from the browser at `http://127.0.0.1:8000`
+
+There are two example users: user_1 and user_2. They have the same password: pa$$word
