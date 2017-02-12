@@ -1,0 +1,72 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$30000$6WqVaTiHPRA3$rtpF+YBFd8xEB56JxfdazCj6dfDPQxCcpYwZH9oMY3Q=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user_1",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2017-02-12T09:39:33Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$30000$eIDhg5rpLfHk$c+t+EqptgLQaYB3/xUuZS6fBhNalsOmqDLi+JfEdzP4=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user_2",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2017-02-12T11:27:14.689Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "django_private_chat.dialog",
+    "pk": 2,
+    "fields": {
+      "created": "2017-02-12T11:27:56.487Z",
+      "modified": "2017-02-12T11:27:56.490Z",
+      "owner": 2,
+      "opponent": 3
+    }
+  },
+  {
+    "model": "django_private_chat.message",
+    "pk": 1,
+    "fields": {
+      "created": "2017-02-12T11:28:21.123Z",
+      "modified": "2017-02-12T11:28:21.126Z",
+      "is_removed": false,
+      "dialog": 2,
+      "sender": 3,
+      "text": "some text"
+    }
+  },
+  {
+    "model": "django_private_chat.message",
+    "pk": 2,
+    "fields": {
+      "created": "2017-02-12T11:29:26.369Z",
+      "modified": "2017-02-12T11:29:26.374Z",
+      "is_removed": false,
+      "dialog": 2,
+      "sender": 2,
+      "text": "some text"
+    }
+  }
+]
