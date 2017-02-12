@@ -51,7 +51,7 @@ Add it to your `INSTALLED_APPS`:
 
     INSTALLED_APPS = (
         ...
-        'django_private_chat.apps.DjangoPrivateChatConfig',
+        'django_private_chat',
         ...
     )
 
@@ -77,7 +77,7 @@ Add django-private-chat's URL patterns:
 
     urlpatterns = [
         ...
-        url(r'^', include(django_private_chat_urls)),
+        url(r'^', include('django_private_chat.urls')),
         ...
     ]
 
