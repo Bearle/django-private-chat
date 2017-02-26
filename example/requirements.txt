@@ -3,3 +3,4 @@
 
 django-private-chat>=0.1.0
 Django==1.10.5
+django-debug-toolbar==1.6

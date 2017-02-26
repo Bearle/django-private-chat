@@ -26,6 +26,20 @@ Example project
 You can check out our example project by cloning the repo and heading into example/ directory.
 There is a README file for you to check, initial data to check out the chat included.
 
+
+Customize the templates
+-----------------------
+
+How to customize the template?
+Just copy::
+
+    venv/lib/pythonX.X/site-packages/django_private_chat/templates/django_private_chat/dialogs.html
+    to
+    yourapp/templates/django_private_chat/dialogs.html
+And feel free to edit it as you like!
+We intentionally left the JS code inside for it to be editable easily.
+
+
 Exsiting project quickstart
 ---------------------------
 
