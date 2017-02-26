@@ -111,16 +111,16 @@ Now you can start a dialog using ::
 Features
 --------
 
-* :white_check_mark: Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
-* :white_check_mark: Translatable (uses ugettext and {% trans %} )
-* :white_check_mark: One-to-one user chat
-* :white_check_mark: Works using WebSockets
-* :white_check_mark: Displays online/offline status
-* :white_check_mark: Display typing/not typing status
-* :white_check_mark: Soft deletable message model - be sure to keep messages to comply with message-keeping laws
-* :point_right: TODO: add a dialog to the list when new one started
-* :point_right: TODO: add user-not-found and other alerts
-* :point_right: TODO: possible Redis backend intergration
+* Uses current app model (get_user_model() and settings.AUTH_USER_MODEL) :white_check_mark:
+* Translatable (uses ugettext and {% trans %} ) :white_check_mark:
+* One-to-one user chat :white_check_mark:
+* Works using WebSockets :white_check_mark:
+* Displays online/offline status :white_check_mark:
+* Display typing/not typing status :white_check_mark:
+* Soft deletable message model - be sure to keep messages to comply with message-keeping laws :white_check_mark:
+* TODO: add a dialog to the list when new one started :point_left:
+* TODO: add user-not-found and other alerts :point_left:
+* TODO: possible Redis backend intergration :point_left:
 
 
 Running Tests
