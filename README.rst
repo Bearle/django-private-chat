@@ -1,6 +1,6 @@
-===================
-django-private-chat
-===================
+=============================================
+:sunglasses: django-private-chat :sunglasses:
+=============================================
 
 .. image:: https://badge.fury.io/py/django-private-chat.svg
     :target: https://badge.fury.io/py/django-private-chat
@@ -111,16 +111,16 @@ Now you can start a dialog using ::
 Features
 --------
 
-* Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
-* Translatable (uses ugettext and {% trans %} )
-* One-to-one user chat
-* Works using WebSockets
-* Displays online/offline status
-* Display typing/not typing status
-* Soft deletable message model - be sure to keep messages to comply with message-keeping laws
-* TODO: add a dialog to the list when new one started
-* TODO: add user-not-found and other alerts
-* TODO: possible Redis backend intergration
+* :white_check_mark: Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
+* :white_check_mark: Translatable (uses ugettext and {% trans %} )
+* :white_check_mark: One-to-one user chat
+* :white_check_mark: Works using WebSockets
+* :white_check_mark: Displays online/offline status
+* :white_check_mark: Display typing/not typing status
+* :white_check_mark: Soft deletable message model - be sure to keep messages to comply with message-keeping laws
+* :point_right: TODO: add a dialog to the list when new one started
+* :point_right: TODO: add user-not-found and other alerts
+* :point_right: TODO: possible Redis backend intergration
 
 
 Running Tests
