@@ -152,7 +152,10 @@
                 $("#online-status").hide();
                 $("#offline-status").show();
             }
-
+            function flash_user_button(username){
+                var btn = $("#user-"+username);
+                btn.fadeTo(700, 0.1, function() { $(this).fadeTo(800, 1.0); });
+            }
             function setupChatWebSocket() {
                 var opponent_username = getOpponnentUsername();
                 websocket = new WebSocket(base_ws_server_path + '{{ request.session.session_key }}/' + opponent_username);
@@ -227,7 +230,11 @@
                             setUserOnlineOffline(packet.username, false);
                             break;
                         case "new-message":
-                            addNewMessage(packet);
+                           if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()){
+                                addNewMessage(packet);
+                            } else {
+                                flash_user_button(packet['sender_name']);
+                            }
                             break;
                         case "opponent-typing":
                             var typing_elem = $('#typing-text');

@@ -142,10 +142,18 @@ def new_messages_handler(stream):
 
                     # Send the message
                     connections = []
+                    # Find socket of the user which sent the message
                     if (user_owner.username, user_opponent.username) in ws_connections:
                         connections.append(ws_connections[(user_owner.username, user_opponent.username)])
+                    # Find socket of the opponent
                     if (user_opponent.username, user_owner.username) in ws_connections:
                         connections.append(ws_connections[(user_opponent.username, user_owner.username)])
+                    else:
+                        # Find sockets of people who the opponent is talking with
+                        opponent_connections = list(filter(lambda x: x[0] == user_opponent.username, ws_connections))
+                        opponent_connections_sockets = [ws_connections[i] for i in opponent_connections]
+                        connections.extend(opponent_connections_sockets)
+
                     yield from fanout_message(connections, packet)
                 else:
                     pass  # no dialog found
