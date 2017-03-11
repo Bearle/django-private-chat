@@ -2,6 +2,12 @@
 
 History
 -------
+0.1.5 (2017-03-11)
+++++++++++++++++++
+
+* Added flashing other user button when he sent you a message and you're in another dialog
+
+
 0.1.4 (2017-02-12)
 ++++++++++++++++++
 

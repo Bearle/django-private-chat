@@ -113,7 +113,7 @@ Features
 
 -:white_check_mark: Uses current app model (get_user_model() and settings.AUTH_USER_MODEL)
 
--:white_check_mark: Translatable (uses ugettext and {% trans %} ) 
+-:white_check_mark: Translatable (uses ugettext and {% trans %} )
 
 -:white_check_mark: One-to-one user chat
 
@@ -124,6 +124,8 @@ Features
 -:white_check_mark: Display typing/not typing status
 
 -:white_check_mark: Soft deletable message model - be sure to keep messages to comply with message-keeping laws
+
+-:white_check_mark: Flash the dialog button when the user you are not currently talking to wrote you a message
 
 -:point_right: TODO: add a dialog to the list when new one started
 
