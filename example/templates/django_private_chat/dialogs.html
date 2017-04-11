@@ -230,10 +230,18 @@
                             setUserOnlineOffline(packet.username, false);
                             break;
                         case "new-message":
-                           if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()){
+                            var username = packet['sender_name'];
+                           if (username == opponent_username || username == $("#owner_username").val()){
                                 addNewMessage(packet);
                             } else {
-                                flash_user_button(packet['sender_name']);
+                                if ($("#user-"+username).length == 0){
+                                    var new_button = $(''+
+                                        '<a href="{% url 'dialogs_detail' username %}" ' +
+                                        'id="user-'+username+'" class="btn btn-danger">{% trans "Chat with" %} '+username+'</a>');
+                                    $("#user-list-div").find("ul").append()
+                                }
+                                flash_user_button(username);
+
                             }
                             break;
                         case "opponent-typing":

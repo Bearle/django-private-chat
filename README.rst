@@ -101,6 +101,13 @@ Add django-private-chat's URL patterns:
         ...
     ]
 
+Add
+
+.. code-block:: python
+
+    {% block extra_js %}{% endblock extra_js %}
+
+to your base template
 
 Now you can start a dialog using ::
 

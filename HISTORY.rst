@@ -2,6 +2,11 @@
 
 History
 -------
+0.1.6 (2017-04-11)
+++++++++++++++++++
+
+* Fixed bugs with static files and added comment about extra_js block to readme
+
 0.1.5 (2017-03-11)
 ++++++++++++++++++
 
