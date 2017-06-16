@@ -43,17 +43,24 @@ class MessageMethodTest(TestCase):
         """
         mes = str(self.message)
         text = self.message.text
-        hour = self.message.modified.strftime('%H')
-        tfhour = self.message.modified.strftime('%I')  # 24-hour clock
         min = self.message.modified.strftime('%M')
         day = self.message.modified.strftime('%d')
+        hour = self.message.modified.strftime('%H')
+        tfhour = self.message.modified.strftime('%I')  # 24-hour clock
         month = self.message.modified.strftime('%m')
         lmon = self.message.modified.strftime('%b')  # month abbreviation
-        self.assertTrue((text in mes) and
-                        (hour in mes or tfhour in mes) and
-                        (min in mes) and
-                        (day in mes) and
-                        (month in mes or lmon in mes))
+        # remove 0 padding
+        min = min.lstrip("0").replace(" 0", " ")
+        day = day.lstrip("0").replace(" 0", " ")
+        hour = hour.lstrip("0").replace(" 0", " ")
+        tfhour = tfhour.lstrip("0").replace(" 0", " ")
+        month = month.lstrip("0").replace(" 0", " ")
+
+        self.assertIn(text, mes)
+        self.assertIn(min, mes)
+        self.assertIn(day, mes)
+        self.assertTrue(hour in mes or tfhour in mes)
+        self.assertTrue(month in mes or lmon in mes)
 
     def test_soft_delete(self):
         msg = self.message

@@ -236,7 +236,7 @@
                             } else {
                                 if ($("#user-"+username).length == 0){
                                     var new_button = $(''+
-                                        '<a href="{% url 'dialogs_detail' username %}" ' +
+                                        '<a href="/'+ username + '"' +
                                         'id="user-'+username+'" class="btn btn-danger">{% trans "Chat with" %} '+username+'</a>');
                                     $("#user-list-div").find("ul").append()
                                 }
