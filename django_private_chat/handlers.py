@@ -27,7 +27,7 @@ def target_message(conn, payload):
 @asyncio.coroutine
 def fanout_message(connections, payload):
     """
-    distributes payload (message) to all connected ws clients
+    Distributes payload (message) to all connected ws clients
     """
     for conn in connections:
         try:
@@ -47,7 +47,7 @@ def gone_online(stream):
         if session_id:
             user_owner = get_user_from_session(session_id)
             if user_owner:
-                logger.debug('User '+user_owner.username+' gone online')
+                logger.debug('User ' + user_owner.username + ' gone online')
                 # find all connections including user_owner as opponent,
                 # send them a message that the user has gone online
                 online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
@@ -74,7 +74,7 @@ def check_online(stream):
             if user_owner:
                 # Find all connections including user_owner as opponent
                 online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
-                logger.debug('User '+user_owner.username+' has '+str(len(online_opponents))+' opponents online')
+                logger.debug('User ' + user_owner.username + ' has ' + str(len(online_opponents)) + ' opponents online')
                 # Send user online statuses of his opponents
                 socket = ws_connections.get((user_owner.username, opponent_username))
                 if socket:
@@ -101,7 +101,7 @@ def gone_offline(stream):
         if session_id:
             user_owner = get_user_from_session(session_id)
             if user_owner:
-                logger.debug('User '+user_owner.username+' gone offline')
+                logger.debug('User ' + user_owner.username + ' gone offline')
                 # find all connections including user_owner as opponent,
                 #  send them a message that the user has gone offline
                 online_opponents = list(filter(lambda x: x[1] == user_owner.username, ws_connections))
@@ -135,10 +135,12 @@ def new_messages_handler(stream):
                     msg = models.Message.objects.create(
                         dialog=dialog[0],
                         sender=user_owner,
-                        text=packet['message']
+                        text=packet['message'],
+                        read=False
                     )
                     packet['created'] = msg.get_formatted_create_datetime()
                     packet['sender_name'] = msg.sender.username
+                    packet['message_id'] = msg.id
 
                     # Send the message
                     connections = []
@@ -165,7 +167,8 @@ def new_messages_handler(stream):
 
 @asyncio.coroutine
 def users_changed_handler(stream):
-    """Sends connected client list of currently active users in the chatroom
+    """
+    Sends connected client list of currently active users in the chatroom
     """
     while True:
         yield from stream.get()
@@ -174,7 +177,7 @@ def users_changed_handler(stream):
         users = [
             {'username': username, 'uuid': uuid_str}
             for username, uuid_str in ws_connections.values()
-            ]
+        ]
 
         # Make packet with list of new users (sorted by username)
         packet = {
@@ -209,8 +212,40 @@ def is_typing_handler(stream):
 
 
 @asyncio.coroutine
+def read_message_handler(stream):
+    """
+    Send message to user if the opponent has read the message
+    """
+    while True:
+        packet = yield from stream.get()
+        session_id = packet.get('session_key')
+        user_opponent = packet.get('username')
+        message_id = packet.get('message_id')
+        if session_id and user_opponent and message_id is not None:
+            user_owner = get_user_from_session(session_id)
+            if user_owner:
+                message = models.Message.filter(id=message_id).first()
+                if message:
+                    message.read = True
+                    message.save()
+                    logger.debug('Message '+str(message_id)+' is now read')
+                    opponent_socket = ws_connections.get((user_opponent, user_owner.username))
+                    if opponent_socket:
+                        yield from target_message(opponent_socket,
+                                                  {'type': 'opponent-read-message',
+                                                   'username': user_opponent, 'message_id': message_id})
+                else:
+                    pass  # message not found
+            else:
+                pass  # invalid session id
+        else:
+            pass  # no session id or user_opponent or typing
+
+
+@asyncio.coroutine
 def main_handler(websocket, path):
-    """An Asyncio Task is created for every new websocket client connection
+    """
+    An Asyncio Task is created for every new websocket client connection
     that is established. This coroutine listens to messages from the connected
     client and routes the message to the proper queue.
 
@@ -244,4 +279,4 @@ def main_handler(websocket, path):
         finally:
             del ws_connections[(user_owner, username)]
     else:
-        logger.info("Got invalid session_id attempt to connect "+session_id)
+        logger.info("Got invalid session_id attempt to connect " + session_id)

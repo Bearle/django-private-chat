@@ -1,51 +1,59 @@
 .messages-container {
-    height: 300px;
-    border: 1px solid #DDD;
-    position: relative;
+  height: 300px;
+  border: 1px solid #DDD;
+  position: relative;
 }
 
 .messages {
-    box-sizing: border-box;
-    padding: 20px;
-    overflow: auto;
-    height: 300px;
+  box-sizing: border-box;
+  padding: 20px;
+  overflow: auto;
+  height: 300px;
 }
 
 .user-list {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 20%;
-    height: 498px;
-    overflow: auto;
-    background: #EFEFEF;
-    margin: 0;
-    padding: 20px;
-    border-left: 1px solid #DDD;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20%;
+  height: 498px;
+  overflow: auto;
+  background: #EFEFEF;
+  margin: 0;
+  padding: 20px;
+  border-left: 1px solid #DDD;
 }
 
 .user-list li {
-    display: block;
-    color: orange;
-    font-weight: bold;
+  display: block;
+  color: orange;
+  font-weight: bold;
 }
 
 .username {
-    font-weight: bold;
-    color: orange;
+  font-weight: bold;
+  color: orange;
 }
 
 .timestamp {
-    font-size: 12px;
-    color: #CCC;
+  font-size: 12px;
+  color: #ffffff;
 }
 
 .add-message {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .away span {
-    color: #666;
-    font-style: italic;
-    font-weight: normal;
+  color: #666;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.msg-read {
+  background-color: lightgray;
+}
+
+.msg-unread {
+  background-color: #aacc99;
 }

@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+SECRET_KEY = "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -181,3 +181,5 @@ LOGGING = {
     }
 }
 INTERNAL_IPS = ['127.0.0.1', 'localhost']
+SESSION_COOKIE_AGE = 12096000
+LOGIN_REDIRECT_URL = '/admin/'

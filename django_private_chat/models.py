@@ -19,6 +19,7 @@ class Message(TimeStampedModel, SoftDeletableModel):
     dialog = models.ForeignKey(Dialog, verbose_name=_("Dialog"), related_name="messages")
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Author"), related_name="messages")
     text = models.TextField(verbose_name=_("Message text"))
+    read = models.BooleanField(verbose_name=_("Read"), default=False)
     all_objects = models.Manager()
 
     def get_formatted_create_datetime(self):

@@ -46,7 +46,8 @@
                 <div class="messages-container">
                     <div id="messages" class="messages">
                         {% for msg in active_dialog.messages.all %}
-                            <div class="row">
+                            <div class="row {% if msg.read %}msg-read{% else %}msg-unread{% endif %}"
+                                 data-id="{{ msg.id }}">
                                 <p class="{% if msg.sender == request.user %}pull-left{% else %}pull-right{% endif %}">
                                     <span class="username">{{ msg.sender.username }}:</span>
                                     {{ msg.text }}
@@ -79,10 +80,41 @@
 
 {% block extra_js %}
     {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollmonitor/1.2.0/scrollMonitor.js"
+            integrity="sha256-BseZlDlA+yL4qu+Voi82iFa5aaifralQEXIjOjaXgeo=" crossorigin="anonymous"></script>
     <script>
         var base_ws_server_path = "{{ ws_server_path }}";
         $(document).ready(function () {
             var websocket = null;
+            var monitor = null;
+
+            function initReadMessageHandler(containerMonitor, elem) {
+                var id = $(elem).data('id');
+                var elementWatcher = containerMonitor.create(elem);
+                elementWatcher.enterViewport(function () {
+                    var opponent_username = getOpponnentUsername();
+                    var packet = JSON.stringify({
+                        type: 'read_message',
+                        session_key: '{{ request.session.session_key }}',
+                        username: opponent_username,
+                        message_id: id
+                    });
+                    $(elem).removeClass('msg-unread').addClass('msg-read');
+                    websocket.send(packet);
+                });
+            }
+
+            function initScrollMonitor() {
+                var containerElement = $("#messages");
+                var containerMonitor = scrollMonitor.createContainer(containerElement);
+                $('.msg-unread').each(function (i, elem) {
+                    if ($(elem).hasClass('opponent')){
+                        initReadMessageHandler(containerMonitor, elem);
+                    }
+
+                });
+                return containerMonitor
+            }
 
             function getOpponnentUsername() {
                 return "{{ opponent_username }}";
@@ -106,7 +138,7 @@
                     msg_class = "pull-right";
                 }
                 var msgElem =
-                    $('<div class="row">' +
+                    $('<div class="row msg-unread" data-id="' + packet.message_id + '">' +
                         '<p class="' + msg_class + '">' +
                         '<span class="username">' + packet['sender_name'] + ': </span>' +
                         packet['message'] +
@@ -145,10 +177,14 @@
                 $("#online-status").hide();
                 $("#offline-status").show();
             }
-            function flash_user_button(username){
-                var btn = $("#user-"+username);
-                btn.fadeTo(700, 0.1, function() { $(this).fadeTo(800, 1.0); });
+
+            function flash_user_button(username) {
+                var btn = $("#user-" + username);
+                btn.fadeTo(700, 0.1, function () {
+                    $(this).fadeTo(800, 1.0);
+                });
             }
+
             function setupChatWebSocket() {
                 var opponent_username = getOpponnentUsername();
                 websocket = new WebSocket(base_ws_server_path + '{{ request.session.session_key }}/' + opponent_username);
@@ -172,6 +208,7 @@
                     websocket.send(onConnectPacket);
                     console.log('checking online opponents with:', onOnlineCheckPacket);
                     websocket.send(onOnlineCheckPacket);
+                    monitor = initScrollMonitor();
                 };
 
 
@@ -223,8 +260,11 @@
                             setUserOnlineOffline(packet.username, false);
                             break;
                         case "new-message":
-                            if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()){
+                            if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()) {
                                 addNewMessage(packet);
+                                if (packet['sender_name'] == opponent_username) {
+                                    initReadMessageHandler(monitor, $("div[data-id='" + packet['message_id'] + "']"));
+                                }
                             } else {
                                 flash_user_button(packet['sender_name']);
                             }
@@ -238,6 +278,11 @@
                                 typing_elem.fadeIn(0);
                             }
                             typing_elem.fadeOut(3000);
+                            break;
+                        case "opponent-read-message":
+                            if (packet['username'] == opponent_username) {
+                                $("div[data-id='" + packet['message_id'] + "']").removeClass('msg-unread').addClass('msg-read');
+                            }
                             break;
 
                         default:
