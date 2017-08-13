@@ -15,6 +15,16 @@ Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
 
 .. image:: https://github.com/Bearle/django-private-chat/blob/dev/screenshots/screen_1.jpg?raw=true
 
+Important Notes
+-------------
+
+This app uses separate management command, run_chat_server for running Websockets in Django context. It is intended to be used with something like Supervisor or Systemd to run asyncio webserver as a separate one from Django.
+We didn't want our app to be limited to be used together with Django Channels - that's why we did it that way.
+
+You can find an example Systemd config to run it as a service at https://github.com/Bearle/django-private-chat/blob/dev/example.service
+
+P.S. Don't forget to change CHAT_WS_SERVER_HOST && CHAT_WS_SERVER_PORT settings!
+
 Documentation
 -------------
 
@@ -162,3 +172,4 @@ Tools used in rendering this package:
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`cookiecutter-djangopackage`: https://github.com/pydanny/cookiecutter-djangopackage
+

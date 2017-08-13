@@ -13,6 +13,7 @@ from django_private_chat.models import *
 
 
 class DialogMethodTest(TestCase):
+
     def setUp(self):
         self.dialog = Dialog()
         self.dialog.owner = self.make_user(username="owuser")
@@ -23,6 +24,7 @@ class DialogMethodTest(TestCase):
 
 
 class MessageMethodTest(TestCase):
+
     def setUp(self):
         self.dialog = Dialog()
         self.dialog.owner = self.make_user(username="owuser")
@@ -35,8 +37,30 @@ class MessageMethodTest(TestCase):
         self.message.save()
 
     def test_str_method(self):
-        self.assertEqual(str(self.message), "owuser(" +
-                         self.message.modified.strftime('%x %X') + ") - 'text about something interesting'")
+        """
+        Makes sure message text and something relating to the date
+        is in the string function output
+        """
+        mes = str(self.message)
+        text = self.message.text
+        min = self.message.modified.strftime('%M')
+        day = self.message.modified.strftime('%d')
+        hour = self.message.modified.strftime('%H')
+        tfhour = self.message.modified.strftime('%I')  # 24-hour clock
+        month = self.message.modified.strftime('%m')
+        lmon = self.message.modified.strftime('%b')  # month abbreviation
+        # remove 0 padding
+        min = min.lstrip("0").replace(" 0", " ")
+        day = day.lstrip("0").replace(" 0", " ")
+        hour = hour.lstrip("0").replace(" 0", " ")
+        tfhour = tfhour.lstrip("0").replace(" 0", " ")
+        month = month.lstrip("0").replace(" 0", " ")
+
+        self.assertIn(text, mes)
+        self.assertIn(min, mes)
+        self.assertIn(day, mes)
+        self.assertTrue(hour in mes or tfhour in mes)
+        self.assertTrue(month in mes or lmon in mes)
 
     def test_soft_delete(self):
         msg = self.message

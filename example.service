@@ -1,0 +1,25 @@
+[Unit]
+
+Description=Django Private Chat example
+
+After=network.target
+
+ 
+
+[Service]
+
+User=user
+
+Environment="DJANGO_SECRET_KEY=sssssomekey"
+
+Environment="DJANGO_SETTINGS_MODULE=example.settings"
+
+Group=www-data
+
+WorkingDirectory=/home/user/django-private-chat/example/
+
+ExecStart=/home/user/django-private-chat/example/venv/bin/python /home/user/django-private-chat/example/manage.py run_chat_server
+
+[Install]
+
+WantedBy=multi-user.target

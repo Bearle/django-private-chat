@@ -1,7 +1,7 @@
 from test_plus.test import TestCase
 from django_private_chat.views import *
 from django.test import RequestFactory
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 from django_private_chat.models import *
 
 

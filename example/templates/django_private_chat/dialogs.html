@@ -269,11 +269,18 @@
                         case "new-message":
                             if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()) {
                                 addNewMessage(packet);
-                                if (packet['sender_name'] == opponent_username) {
+                                if (username == opponent_username) {
                                     initReadMessageHandler(monitor, $("div[data-id='" + packet['message_id'] + "']"));
                                 }
                             } else {
-                                flash_user_button(packet['sender_name']);
+                                if ($("#user-"+username).length == 0){
+                                    var new_button = $(''+
+                                        '<a href="/'+ username + '"' +
+                                        'id="user-'+username+'" class="btn btn-danger">{% trans "Chat with" %} '+username+'</a>');
+                                    $("#user-list-div").find("ul").append()
+                                }
+                                flash_user_button(username);
+
                             }
                             break;
                         case "opponent-typing":
