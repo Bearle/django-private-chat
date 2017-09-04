@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 
 CHAT_WS_SERVER_HOST = 'localhost'
 CHAT_WS_SERVER_PORT = 5002
+CHAT_WS_SERVER_PROTOCOL = 'ws'
 
 # Application definition
 
