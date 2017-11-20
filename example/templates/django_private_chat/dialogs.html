@@ -267,7 +267,8 @@
                             setUserOnlineOffline(packet.username, false);
                             break;
                         case "new-message":
-                            if (packet['sender_name'] == opponent_username || packet['sender_name'] == $("#owner_username").val()) {
+                            var username = packet['sender_name'];
+                           if (username == opponent_username || username == $("#owner_username").val()){
                                 addNewMessage(packet);
                                 if (username == opponent_username) {
                                     initReadMessageHandler(monitor, $("div[data-id='" + packet['message_id'] + "']"));
