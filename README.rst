@@ -23,7 +23,7 @@ We didn't want our app to be limited to be used together with Django Channels - 
 
 You can find an example Systemd config to run it as a service at https://github.com/Bearle/django-private-chat/blob/dev/example.service
 
-P.S. Don't forget to change CHAT_WS_SERVER_HOST && CHAT_WS_SERVER_PORT settings!
+P.S. Don't forget to change CHAT_WS_SERVER_HOST && CHAT_WS_SERVER_PORT && CHAT_WS_SERVER_PROTOCOL settings!
 
 Documentation
 -------------
@@ -91,6 +91,7 @@ Add the server & port for your asyncio server to settings:
 
     CHAT_WS_SERVER_HOST = 'localhost'
     CHAT_WS_SERVER_PORT = 5002
+    CHAT_WS_SERVER_PROTOCOL = 'ws'
 
 It is possible to change messages datetime format using
 
