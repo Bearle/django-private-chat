@@ -31,5 +31,5 @@ class Command(BaseCommand):
         asyncio.async(handlers.gone_offline(channels.offline))
         asyncio.async(handlers.is_typing_handler(channels.is_typing))
         asyncio.async(handlers.read_message_handler(channels.read_unread))
-        loop = uvloop.new_event_loop()
+        loop = asyncio.get_event_loop()
         loop.run_forever()
