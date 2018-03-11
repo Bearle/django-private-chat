@@ -10,6 +10,8 @@
 
 .. image:: https://codecov.io/gh/Bearle/django-private-chat/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/Bearle/django-private-chat
+    
+Please also check out our another package https://github.com/Bearle/django_mail_admin
 
 Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
 
