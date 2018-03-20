@@ -45,18 +45,16 @@ INSTALLED_APPS = [
     'custom_app',
 ]
 
-l = (
+l = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-)
+]
 
 from django import get_version
 from packaging import version
@@ -65,6 +63,7 @@ if version.parse(get_version()) < version.parse("1.10"):
     MIDDLEWARE_CLASSES = l
 else:
     MIDDLEWARE = l
+    MIDDLEWARE += ['django.contrib.auth.middleware.SessionAuthenticationMiddleware', ]
 
 ROOT_URLCONF = 'example.urls'
 
