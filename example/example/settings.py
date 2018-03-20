@@ -61,9 +61,9 @@ from packaging import version
 
 if version.parse(get_version()) < version.parse("1.10"):
     MIDDLEWARE_CLASSES = l
+    MIDDLEWARE_CLASSES += ['django.contrib.auth.middleware.SessionAuthenticationMiddleware', ]
 else:
     MIDDLEWARE = l
-    MIDDLEWARE += ['django.contrib.auth.middleware.SessionAuthenticationMiddleware', ]
 
 ROOT_URLCONF = 'example.urls'
 
