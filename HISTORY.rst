@@ -1,6 +1,12 @@
 .. :changelog:
 
 History
+
+0.1.7 (2018-03-23)
+++++++++++++++++++
+
+* Fixed time in Message model to be timezone-aware
+
 0.1.7 (2018-03-20)
 ++++++++++++++++++
 
