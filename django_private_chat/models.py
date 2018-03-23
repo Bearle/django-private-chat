@@ -5,7 +5,7 @@ from model_utils.models import TimeStampedModel, SoftDeletableModel
 from django.conf import settings
 from django.template.defaultfilters import date as dj_date
 from django.utils.translation import ugettext as _
-
+from django.utils.timezone import localtime
 
 class Dialog(TimeStampedModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Dialog owner"), related_name="selfDialogs",
@@ -25,7 +25,7 @@ class Message(TimeStampedModel, SoftDeletableModel):
     all_objects = models.Manager()
 
     def get_formatted_create_datetime(self):
-        return dj_date(self.created, settings.DATETIME_FORMAT)
+        return dj_date(localtime(self.created), settings.DATETIME_FORMAT)
 
     def __str__(self):
         return self.sender.username + "(" + self.get_formatted_create_datetime() + ") - '" + self.text + "'"
