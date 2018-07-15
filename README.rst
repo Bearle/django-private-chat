@@ -10,7 +10,7 @@
 
 .. image:: https://codecov.io/gh/Bearle/django-private-chat/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/Bearle/django-private-chat
-    
+
 Please also check out our another package https://github.com/Bearle/django_mail_admin
 
 Django one-to-one Websocket-based Asyncio-handled chat, developed by Bearle team
@@ -127,6 +127,13 @@ Now you can start a dialog using ::
     /dialogs/some_existing_username
 
 
+To create a WSS (TLS) server instead:
+
+.. code-block:: python
+
+    python manage.py run_chat_server "path/to/cert.pem"
+
+(also works with uvloop). The "cert.pem" file should be a plaintext PEM file containing first a private key, then a certificate (may be a concatenation of a .key and a .crt file).
 
 Features
 --------
@@ -138,6 +145,8 @@ Features
 -:white_check_mark: One-to-one user chat
 
 -:white_check_mark: Works using WebSockets
+
+-:white_check_mark: Works (optionally) using WSS (TLS) connections (disclaimer - security not guaranteed)
 
 -:white_check_mark: Displays online/offline status
 

@@ -1,4 +1,5 @@
 import asyncio
+import ssl
 import websockets
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -9,14 +10,25 @@ from django_private_chat.utils import logger
 class Command(BaseCommand):
     help = 'Starts message center chat engine'
 
+    def add_arguments(self, parser):
+        parser.add_argument('ssl_cert', nargs='?', type=str)
+
     def handle(self, *args, **options):
+        if options['ssl_cert'] is not None:
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl_context.load_cert_chain(options['ssl_cert'])
+        else:
+            ssl_context = None
+
         asyncio.async(
             websockets.serve(
                 handlers.main_handler,
                 settings.CHAT_WS_SERVER_HOST,
-                settings.CHAT_WS_SERVER_PORT
+                settings.CHAT_WS_SERVER_PORT,
+                ssl=ssl_context
             )
         )
+
         logger.info('Chat server started')
         asyncio.async(handlers.new_messages_handler(channels.new_messages))
         asyncio.async(handlers.users_changed_handler(channels.users_changed))

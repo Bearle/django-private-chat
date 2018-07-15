@@ -7,6 +7,7 @@ from django.template.defaultfilters import date as dj_date
 from django.utils.translation import ugettext as _
 from django.utils.timezone import localtime
 
+
 class Dialog(TimeStampedModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Dialog owner"), related_name="selfDialogs",
                               on_delete=models.CASCADE)
