@@ -228,7 +228,7 @@ def read_message_handler(stream):
                 if message:
                     message.read = True
                     message.save()
-                    logger.debug('Message '+str(message_id)+' is now read')
+                    logger.debug('Message ' + str(message_id) + ' is now read')
                     opponent_socket = ws_connections.get((user_opponent, user_owner.username))
                     if opponent_socket:
                         yield from target_message(opponent_socket,
@@ -267,7 +267,8 @@ def main_handler(websocket, path):
         try:
             while websocket.open:
                 data = yield from websocket.recv()
-                if not data: continue
+                if not data:
+                    continue
                 logger.debug(data)
                 try:
                     yield from router.MessageRouter(data)()

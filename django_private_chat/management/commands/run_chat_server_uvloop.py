@@ -1,4 +1,5 @@
 import asyncio
+import ssl
 import websockets
 import uvloop
 from django.conf import settings
@@ -13,12 +14,22 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 class Command(BaseCommand):
     help = 'Starts message center chat engine with uvloop'
 
+    def add_arguments(self, parser):
+        parser.add_argument('ssl_cert', nargs='?', type=str)
+
     def handle(self, *args, **options):
+        if options['ssl_cert'] is not None:
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl_context.load_cert_chain(options['ssl_cert'])
+        else:
+            ssl_context = None
+
         asyncio.async(
             websockets.serve(
                 handlers.main_handler,
                 settings.CHAT_WS_SERVER_HOST,
-                settings.CHAT_WS_SERVER_PORT
+                settings.CHAT_WS_SERVER_PORT,
+                ssl=ssl_context
             )
         )
 

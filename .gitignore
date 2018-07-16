@@ -45,3 +45,9 @@ output/*/index.html
 
 # Sphinx
 docs/_build
+
+# Windows
+Include
+Scripts
+tcl
+pip-selfcheck.json
