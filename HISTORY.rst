@@ -2,7 +2,12 @@
 
 History
 
-0.1.7 (2018-03-23)
+0.1.9 (2018-07-16)
+++++++++++++++++++
+
+* Added WSS support by @zsmith3
+
+0.1.8 (2018-03-23)
 ++++++++++++++++++
 
 * Fixed time in Message model to be timezone-aware
