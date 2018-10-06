@@ -14,6 +14,10 @@ Contents:
    readme
    installation
    usage
+   messages
+   settings
+   admin
+   starting_the_server
    contributing
    authors
    history

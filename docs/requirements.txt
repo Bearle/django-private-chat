@@ -1,0 +1,2 @@
+-r ../requirements_dev.txt
+Django==1.10.5
