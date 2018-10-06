@@ -30,7 +30,7 @@ P.S. Don't forget to change CHAT_WS_SERVER_HOST && CHAT_WS_SERVER_PORT && CHAT_W
 Documentation
 -------------
 
-The full documentation will be (soon) at https://django-private-chat.readthedocs.io , for now just check the docstrings =)
+The full documentation is (finally) at  https://django-private-chat.readthedocs.io . You can also check the docstrings & this readme.
 
 Example project
 ---------------
