@@ -133,8 +133,10 @@ To create a WSS (TLS) server instead:
 
     python manage.py run_chat_server "path/to/cert.pem"
 
-(also works with uvloop). The "cert.pem" file should be a plaintext PEM file containing first a private key, then a certificate (may be a concatenation of a .key and a .crt file).
 
+(also works with uvloop).
+The "cert.pem" file should be a plaintext PEM file containing first a private key, then a certificate (may be a concatenation of a .key and a .crt file).
+Please note that wss will use TLSv1 by default for python 3.5 & 3.4 and will use ssl.PROTOCOL_TLS_SERVER for 3.6 and above.
 Features
 --------
 

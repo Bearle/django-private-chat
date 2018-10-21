@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_private_chat import channels, handlers
 from django_private_chat.utils import logger
+import sys
 
 
 class Command(BaseCommand):
@@ -15,7 +16,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['ssl_cert'] is not None:
-            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            if sys.version_info >= (3, 6):
+                protocol = ssl.PROTOCOL_TLS_SERVER
+            elif sys.version_info >= (3, 4):
+                protocol = ssl.PROTOCOL_TLSv1
+            else:
+                v = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
+                version_s = 'Version %s is not supported for wss!' % v
+                raise Exception(version_s)
+            ssl_context = ssl.SSLContext(protocol)
             ssl_context.load_cert_chain(options['ssl_cert'])
         else:
             ssl_context = None
