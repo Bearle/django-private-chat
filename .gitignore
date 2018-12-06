@@ -56,3 +56,7 @@ pip-selfcheck.json
 venv/
 .vscode/
 .python-version
+
+# sqlite
+*.sqlite
+*.sqlite3
