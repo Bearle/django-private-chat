@@ -51,3 +51,8 @@ Include
 Scripts
 tcl
 pip-selfcheck.json
+
+# env
+venv/
+.vscode/
+.python-version
