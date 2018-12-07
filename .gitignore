@@ -51,3 +51,12 @@ Include
 Scripts
 tcl
 pip-selfcheck.json
+
+# env
+venv/
+.vscode/
+.python-version
+
+# sqlite
+*.sqlite
+*.sqlite3
