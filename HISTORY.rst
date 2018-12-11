@@ -2,6 +2,11 @@
 
 History
 
+0.2.1 (2018-12-07)
+++++++++++++++++++
+
+* Compatibility with python3.7 by Emeka Icha
+
 0.2.0 (2018-10-22)
 ++++++++++++++++++
 
