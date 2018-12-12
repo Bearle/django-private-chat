@@ -224,7 +224,7 @@ def read_message_handler(stream):
         if session_id and user_opponent and message_id is not None:
             user_owner = get_user_from_session(session_id)
             if user_owner:
-                message = models.Message.filter(id=message_id).first()
+                message = models.Message.objects.filter(id=message_id).first()
                 if message:
                     message.read = True
                     message.save()
