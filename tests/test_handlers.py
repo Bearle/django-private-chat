@@ -105,4 +105,5 @@ def test_users_changed_handler():
 
     result = yield from mocked.users_changed_handler(channels.users_changed)
 
-    assert result is not None 
+    assert result is not None
+     
