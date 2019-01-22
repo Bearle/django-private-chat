@@ -60,3 +60,6 @@ venv/
 # sqlite
 *.sqlite
 *.sqlite3
+
+# pytest cache
+.pytest_cache
