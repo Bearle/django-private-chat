@@ -1,4 +1,4 @@
-##Example Project for django_private_chat
+## Example Project for django_private_chat
 
 This example is provided as a convenience feature to allow potential users to try the app straight from the app repo without having to create a django project.
 
