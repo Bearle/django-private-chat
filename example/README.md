@@ -12,7 +12,7 @@ To run this example, follow these instructions:
         virtualenv venv -p python3
         source venv/bin/activate
 	(For Windows User)
-	venv\Scripts\actiate
+	venv\Scripts\activate
         
 3. Install the requirements for the package:
 		
