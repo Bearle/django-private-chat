@@ -57,7 +57,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=["django-model-utils>=2.6.1","django-braces>=1.10.0",
-                      "websockets==3.2"],
+                      "websockets==8.1"],
     license="ISCL",
     zip_safe=False,
     keywords='django-private-chat',
@@ -73,5 +73,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
