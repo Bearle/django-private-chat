@@ -32,18 +32,31 @@ Add django-private-chat's URL patterns:
         url(r'^', include(django_private_chat_urls)),
         ...
     ]
+    
+or
+
+.. code-block:: python
+
+    urlpatterns = [
+        ...
+        path('', include(django_private_chat.urls)),
+        ...
+    ]
+
 
 Add
 
 .. code-block:: python
 
+    {% block css %}{% endblock css %}
+    {% block content %}{% endblock content %}
     {% block extra_js %}{% endblock extra_js %}
 
 to your base template
 
 Migrate::
 
-    python manage.py migrate django-private-chat
+    python manage.py migrate django_private_chat
 
 Now start the chat server:
 
