@@ -30,7 +30,7 @@ class Command(BaseCommand):
             ssl_context = None
 
         if hasattr(asyncio, "ensure_future"):
-            ensure_future = asyncio.ensure_future 
+            ensure_future = asyncio.ensure_future
         else:
             ensure_future = getattr(asyncio, "async")
 
