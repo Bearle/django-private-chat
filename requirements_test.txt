@@ -1,9 +1,9 @@
-coverage==4.3.3
-mock>=1.0.1
-flake8>=2.1.0
-tox>=1.7.0
-codecov>=2.0.0
-django-model-utils==2.6.1
+coverage==5.1
+mock>=4.0.2
+flake8>=3.7.9
+tox>=3.15.0
+codecov>=2.0.22
+django-model-utils==4.0.0
 
 # Additional test requirements go here
-django-test-plus==1.0.17
+django-test-plus==1.4.0

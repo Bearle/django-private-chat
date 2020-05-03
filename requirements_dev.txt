@@ -1,5 +1,5 @@
 bumpversion==0.5.3
-wheel==0.29.0
-django-model-utils>=2.0
-sphinx==1.7.5
+wheel==0.34.2
+django-model-utils>=4.0.0
+sphinx==3.0.3
 sphinx-rtd-theme==0.4.0

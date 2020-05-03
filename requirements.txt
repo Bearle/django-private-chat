@@ -1,4 +1,4 @@
-django-model-utils==2.6.1
+django-model-utils==4.0.0
 # Additional requirements go here
-django-braces==1.12.0
+django-braces==1.14.0
 websockets==8.1
