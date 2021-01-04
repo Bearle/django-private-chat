@@ -54,7 +54,7 @@ And feel free to edit it as you like!
 We intentionally left the JS code inside for it to be editable easily.
 
 
-Exsiting project quickstart
+Existing project quickstart
 ---------------------------
 
 Install django-private-chat::
