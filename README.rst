@@ -1,4 +1,15 @@
 =============================================
+:stop_sign: Deprecated :stop_sign:
+=============================================
+
+This project is deprecated. A new and improved version has been released:
+
+https://github.com/Bearle/django_private_chat2
+
+Please check it out.
+
+
+=============================================
 :sunglasses: django-private-chat :sunglasses:
 =============================================
 
