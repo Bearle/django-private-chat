@@ -3,5 +3,5 @@
 
 -e ../
 Django==2.2.13
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 packaging==20.3
