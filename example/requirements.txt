@@ -2,6 +2,6 @@
 -r ../requirements_test.txt
 
 -e ../
-Django==2.2.13
+Django==2.2.21
 django-debug-toolbar==2.2
 packaging==20.3
