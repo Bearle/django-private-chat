@@ -4,7 +4,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel, SoftDeletableModel
 from django.conf import settings
 from django.template.defaultfilters import date as dj_date
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import localtime
 
 
